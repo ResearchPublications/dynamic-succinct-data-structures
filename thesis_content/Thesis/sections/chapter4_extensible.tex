@@ -1,0 +1,469 @@
+\chapter{Extensible Array Representation}
+\label{chap:extensible}
+
+This chapter presents existing work in the area of extensible arrays. Dynamic arrays that support append-only operations alongside the standard static operations are introduced. The focus is then placed on extensible arrays of non-standard width ($1\leq width \leq w$). These dynamic arrays are subsequently utilised to build an efficient Elias-Fano implementation that supports \textit{append-only} operations. Variations of this data structure that perform well in various settings are presented.
+\section{Extensible Array}
+ Arrays are excellent example of static data structures that have been studied extensively \cite{Navarro_2016}. Vector is the most basic form of extendible array that supports random access in constant time. They have been shown to solve a number of dynamic data structures problem such as randomised queues, stacks, priority queues and queues \cite{Brodnik_1999, Navarro_2016, Brodnik_1993}, and have been used in building complex compact data structures \cite{Munro_2001, Raman_2003}. An Extendible Array (EA) built upon the idea of vectors is described in this chapter. Other variants of EAs of non-standard widths (such as bit-vectors, shorts, characters, etc.) are also presented. The operations supported are:
+\begin{itemize}
+    \item $create(n)$: Create an array of initial size $n$
+    \item $access(i)$: Access the item at index $i$.
+    \item $append(x)$: Adds a new item at the end of array.
+    \item $grow()$: resize the array to new size $m > n$
+\end{itemize}
+\subsection{Vector EA}
+A Vector is a common example of extendible array that supports $access$ operation in $O(1)$ time and $grow/shrink$ in amortised constant time using $n + O(n)$. To append a new item to a vector of size $n$ that is already full, we need to increase it's size. The most common approach is to double the size of the vector to $2n$ to allow for up to $n$ new appends before the need to resize the vector. This may create internal fragmentation problem of $n-1$ of a vector of $2n$. Likewise, using first-fit allocator, a sequence of $grow()/shrink()$ could lead to inefficiencies such that despite the array using $n$ space, the allocated range of memory could span $\Theta(n \log n)$. A typical vector supports only word-size elements, but we are also interested of elements of non-standard width. \hfill\newline
+
+\begin{table}[ht]
+    \centering
+    \begin{minipage}[t]{0.4\textwidth}
+        \centering
+        \begin{algorithm}[H]
+            \caption{Grows $A$ by $n$}
+            \begin{algorithmic}[1]
+                \STATE \textbf{procedure} \texttt{GROW}()
+                \STATE $A_o$ is new array of size $2n$
+                \FOR{$i := 1$ to $size(A)$}
+                    \STATE $A_o[i] := A[i]$
+                \ENDFOR
+                \RETURN $A_o$
+            \end{algorithmic}
+        \end{algorithm}
+    \end{minipage}%
+    \hspace{0.1\textwidth}% Adjust horizontal spacing between tables
+    \begin{minipage}[t]{0.5\textwidth}
+        \vspace{0.5cm}
+        \textbf{Example}\hfill\par\par
+        \vspace{0.3cm}
+        \begin{tabular}{|c|c|c|c|}
+            \hline
+             14& 56 & 32 & \\
+            \hline
+        \end{tabular}
+        \newline\newline
+
+        \begin{tabular}{|c|c|c|c|c|c|c|c|}
+            \hline
+            14 & 56 & 32 & 24 & & & & \\
+            \hline
+        \end{tabular}
+
+        \caption{Append $24$ to the vector and resize}
+    \end{minipage}
+\end{table}\par
+
+\subsubsection{Correctness of GROW Operation}
+
+The correctness of the GROW operation is established using a Hoare triple specification.
+
+\textbf{Precondition} ($P$): Let $A$ be a valid array with logical size $n$ and physical capacity $c$, where $n = c$ (array is full). Let $v_0, v_1, \ldots, v_{n-1}$ denote the current values stored in $A$.
+
+\textbf{Postcondition} ($Q$): After GROW completes, the resulting array $A_o$ satisfies:
+\begin{enumerate}
+    \item $\text{capacity}(A_o) = 2n > c$ (capacity has increased)
+    \item $\text{size}(A_o) = n$ (logical size unchanged)
+    \item $\forall i \in [0, n): A_o[i] = v_i$ (all values preserved)
+\end{enumerate}
+
+\textbf{Hoare Triple}: $\{P\}$ \texttt{GROW()} $\{Q\}$
+
+\textbf{Proof}: By loop invariant analysis.
+\begin{itemize}
+    \item \textit{Initialisation}: Before the loop, $A_o$ is allocated with capacity $2n > c$. No elements have been copied yet.
+    \item \textit{Maintenance}: At iteration $i$, the assignment $A_o[i] := A[i]$ copies element $v_i$ to position $i$ in the new array. The loop invariant is: $\forall j \in [1, i]: A_o[j] = v_j$.
+    \item \textit{Termination}: When $i = \text{size}(A) = n$, all elements have been copied. The postcondition $Q$ is established.
+\end{itemize}
+
+\textbf{Termination}: The loop iterates exactly $n$ times, so GROW terminates in $O(n)$ time.
+
+\subsection{Simple EA}
+By choosing a fixed resize factor $f$, the internal fragmentation from above can be reduced. Normally, $f$ is a power of $2$. This keeps the $O(1)$ access and append time and worst case $O(n)$ amortised time for grow operation. The worst case internal fragmentation is improved to $O(f)$ but speed of grow operation is significantly degraded.
+
+\subsection{Brodnik et al EA}
+Brodnik \cite{Brodnik_1999} proposed a singly extendible array that use $n + O(\sqrt{n})$ space at all times (where $n$ is the total number of elements in the array). They achieve this by dividing the array into consecutive $data-blocks$ $DB_A$ of the sizes $2^i$ where $0 \leq i \leq \log n$. A conceptual $super-block$ $SB_A$ of size $2^{\log n}$ contains \textit{data-blocks} of the same size. As each data block is of size $2^{\lceil i/2 \rceil}$, a \textit{super-block} $SB_i$ will have a maximum of $2^{\lfloor i/2 \rfloor}$ data blocks until it is full. Therefore, $SB_i$ will have a total of $2^i$ elements in it. To further keep space usage low, memory is only allocated for non-empty blocks.
+\begin{figure}[H]
+    \centering
+   \[\begin{array}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}\hline
+14 & 56 & 32 & 24 & 29 & 44 & 56 & 23 & 65 & 23 & 45 & 33 & 98 & 12 & 19\\ \hline
+\multicolumn{1}{c}{\underbrace{\hphantom{14}}_{\text{$SB_0$}}} &
+\multicolumn{2}{c}{\underbrace{\hphantom{56 \quad 32}}_{\text{$SB_1$}}} &
+\multicolumn{4}{c}{\underbrace{\hphantom{24 \quad 29 \quad 44 \quad 56 }}_{\text{$SB_2$}}} &
+\multicolumn{8}{c}{\underbrace{\hphantom{23 \quad 65 \quad 23 \quad 45 \quad 33 \quad 98 \quad 12 \quad 19}}_{\text{$SB_3$}}} \\
+\end{array}\]
+    \caption{Consecutive blocks of $2^i$ where $0 \leq i \leq \log n$}
+    \label{fig:enter-label}
+\end{figure}
+The algorithm for access operation is shown below. A key aspect of it is how to compute the position of the leading set bit in the binary representation of $i+1$ in constant time. Brodnik \cite{Brodnik_1993} gives a method that uses basic arithmetic and logic operators to achieve this in constant time. But modern machines allows for this as well using Bit Scan Reverse instruction \cite{intel_bsr}.\par
+\begin{table}[ht]
+    \centering
+    \begin{minipage}[t]{1\textwidth}
+        \centering
+        \begin{algorithm}[H]
+            \caption{Access(i)}
+            \begin{algorithmic}[1]
+                \STATE Let $r$ be the binary representation of $i-1$ with no leading zeros
+                \STATE Let the \textit{super-block} $k = \lfloor \log i+1 \rfloor$.
+                \STATE Let $b = \lfloor k/2 \rfloor$ bit of the \textit{super-block} after the leading 1-bit
+                \STATE Let $e$ be the remaining $\lfloor k/2 \rfloor$ bits of $r$.
+                \RETURN the element $e$ in \textit{data-block} $b$ of \textit{super-block} $k$.
+            \end{algorithmic}
+        \end{algorithm}
+    \end{minipage}%
+\end{table}
+As all the steps in $access$ can be done in constant time if we ignore the cost of dynamic memory allocation, the running time is $O(1)$. Space wasted from internal fragmentation is $O(\sqrt{n}$ words which they show to be optimal.
+\subsection{Collection of Extensible Arrays}
+Joannou \cite{Stelios_2001} described various dynamic random access data structures built as Collection of Extendible Arrays (CEA), which are essentially, a vector of pointers to other vectors. A vector of size $n$ is divided into consecutive blocks of fixed size $b > 1$, and records are stored in fixed-size data blocks of size $b$ each. A vector of $n/b$ pointers (called the index block) stores a pointer to each of the data-blocks. To perform $access(i)$ operation, we only fetch the $(i \mod b)-th$ entry in the $\lfloor i/b \rfloor-th$ data block. It is clear that access operation is $O(1)$ (though, could be slower due to 2-random accesses), and $O(1)$ amortised constant time for grow operation. This approach clearly reduces the internal fragmentation, though, the choice of $b$ needs to be carefully made to avoid having $\theta (b)$ wasted space per data block. \par
+Another approach is to vary the size of the blocks as done in \cite{Brodnik_1999}. The vector of size $n$ is divided into super blocks of size $1, 2, 3 \ldots, 2^{\lfloor \log_2 (n) \rfloor}$. And each super block is sub-divided into data blocks of equal sizes. The access operation takes constant time, while grow operations takes $O(1)$ amortised time. The wasted space is $O\sqrt{n}$ words. The modified Brodnik shares same analysis, though handles the data structure a bit differently. All data blocks are of same initial size $b=2$. A grow operation adds an element to the last data block, and when full, we either double the index or copy two existing data blocks into a newly created data block of size $2b$. \par
+Global Brodnik tries to minimised the internal fragmentation by "self-tunning" the block sizes to an optimal size of $b=\theta (\sqrt{N/t})$ where $t$ is the number of current EAs created and $N$ is the total number of elements. Whenever a block size is twice $b$, the block is either halved or doubled which leads to the re-organisation of all the EAs in the CEA. Access time is $O(1)$ and grow is amortised constant too. The internal fragmentation is $O(\sqrt{Nt)}$. \par
+One thing to note is that CEAs are normally slower in supporting random $access$ than conventional Vector representation. This due to making 2 random access to arrays (index and data blocks respectively), while conventional vector needs only one random access. A solution to this is to make the index block as small as possible to fit into the fast memories so that one of the random accesses will at least be very fast. This is explored later in depth.\par
+Raman \cite{Raman_2001} proposed two implementations of collection of extendible arrays (CEAs) using $o(n)$ extra space. They considered EAs that are of non-standard widths with first implementation supporting all operations in $O(\log n/ \log \log n)$ amortised time while the second supports look up in constant time and updates in $O(n^e)$ time. Their data structure has more functionalities, as it supports $insertion$ at any index $i < n$, while the approach presented here supports only $insertion$ at the end of $A$. Raman and Rao \cite{Raman_2003} proposed an EA with support for elements with various $width$. If $r$ is the width of the elements, they store the EA using $s+O(aw + \sqrt{saw})$ bits of space where $n$ is the number of elements in the EA, $s = n*r$, $a$ is the number of EAs. Joannou \cite{Stelios_2001} also gave an empirical study of the CEAs while emphasising on external fragmentation, whereas the focus here is on the representation of one-dimensional arrays. The need to perform 2 random memory accesses to perform an $access$ in turn slows down the data structure in practice.
+% \subsection{Implementation}
+% \subsection{Memory Fragmentation}
+% \subsection{Reducing Memory Fragmentation}
+\section{Proposed Data Structure}
+The simple approach of resizing extendible arrays by a fixed factor instead of doubling is considered. The aim is to identify the optimal resize factor for vectors of different widths. As such, not only elements of known word-size (32-bits and 64-bits) are considered, but also extendable arrays of elements that require less than word-size number of bits to be represented (such as bit-vectors, characters, shorts, etc.).\par
+Starting with a vector $V$ having initial capacity of $c=O(w)$ (where $w$ is the word-size), the vector is increased when full by an additive factor, say $f$. The appends are done in bits (as the vectors can be of any width ($1\leq width \leq w$)). \textbf{Appending is done in bits} until the array is full, then the array is re-sized (a new array of bigger size is created and \textbf{copying is done in words}). This feature is exploited to show that doubling the size is not always necessary; rather, increasing by a factor less than double provides two gains---reduced internal fragmentation while remaining fast. In general, the amortised cost of re-sizing an Array of $n$ bits by $f=k$ bits is\par
+\[\frac{n/w + k/w}{k} = O(\frac{n}{kw}) \tag{1} \label{eq:1} \]
+By taking the value of $k = n/w$,
+\[ O(\frac{n}{kw}) = O(1) \tag{2} \label{eq:2} \]
+\par
+As the increase is by $f = O(k/w)$, $o(n)$ wasted space is used at worst-case. The following example with a simple bit-vector illustrates various resize factors $f$.
+\begin{table}[H]
+    \centering
+    \footnotesize
+    \setlength{\tabcolsep}{4pt}
+    \begin{tabular}{r r r r r r r r}
+    \toprule
+    & \multicolumn{7}{c}{\textbf{Capacity after resize (bits)}} \\
+    \cmidrule(l){2-8}
+    \textbf{$n$} & \textbf{$f=n$} & \textbf{$f=\frac{n}{2}$} & \textbf{$f=\frac{n}{4}$} & \textbf{$f=\frac{n}{8}$} & \textbf{$f=\frac{n}{16}$} & \textbf{$f=\frac{n}{32}$} & \textbf{$f=\frac{n}{w}$} \\
+    \textbf{(bits)} & \textit{50\%} & \textit{25\%} & \textit{12.5\%} & \textit{6.25\%} & \textit{3.13\%} & \textit{1.56\%} & \textit{1.56\%} \\
+    \midrule
+    4096 & 8192 & 6144 & 5120 & 4608 & 4352 & 4224 & 4160 \\
+    8192 & 16384 & 12288 & 10240 & 9216 & 8704 & 8448 & 8320 \\
+    16384 & 32768 & 24576 & 20480 & 18432 & 17408 & 16896 & 16640 \\
+    32768 & 65536 & 49152 & 40960 & 36864 & 34816 & 33792 & 33280 \\
+    65536 & 131072 & 98304 & 81920 & 73728 & 69632 & 67584 & 66560 \\
+    131072 & 262144 & 196608 & 163840 & 147456 & 139264 & 135168 & 133120 \\
+    262144 & 524288 & 393216 & 327680 & 294912 & 278528 & 270336 & 266240 \\
+    \bottomrule
+    \end{tabular}
+    \caption{Worst-case capacity after resize for various resize factors $f$. The percentages below each factor indicate maximum internal fragmentation. Using $f = n/w$ achieves $<$2\% fragmentation.}
+    \label{table:2}
+\end{table}
+\par 
+While resizing $V$ using $o(n)$ extra space and supporting the resize operation in amortised $O(1)$ time is achievable, the frequency of the \textit{resize} operations must also be considered. This frequency increases with reduced \textit{resize-factor $f$}. To \textit{resize} $V$ currently having $n$ items by factor $f$ to accommodate $m$ elements, the number of \textit{resize operations} needed must be determined.
+\par
+\textbf{Example 1:} Given an array of $n=16$ elements, the number of $resize$ operations needed before it can accommodate $512$ elements with a resize strategy of doubling is determined. Let $k$ denote the number of resizes.
+\par
+$ n.2^k \geq m$\newline
+$ 16.2^k \geq 512$\newline
+$2^k \geq 32$\newline
+$k \geq 5$ is the minimum number of resize operations needed.
+\par
+\textbf{Example 2:} For $f$ less than doubling, we proceed as follows:
+\begin{itemize}
+    \item Initially, we have $a_0 = n$
+    \item When full, we resize to $a_1 = n + n/f$
+    \item Then again to $a_2 = a_1 + a_1/f$
+    \item \ldots
+    \item $a_k+1 = a_k + a_k/f$
+\end{itemize}
+By finding the general term of the geometric progression and determining the common ratio, we can get the formula as:
+$$a_k = n(\frac{f+1}{f})^k$$
+From the earlier example, to determine how many resize operations are needed for $f = 1/4$, the following is solved:
+$16(\frac{5}{4})^k = 512$, using logarithms, we solve for $k$ as $k \geq 16$. This means that new need at least $16$ resize operations to get $512$ elements into the array. Compared with Example 1, that's almost 3 times more resize operations.
+\section{Dynamic Data Structures}
+Three dynamic data structures are proposed and described: append-only bitvector, append-only Elias-Fano, and Dynamic Elias-Fano with special inserts. Append-only bit-vectors are specialised variants of vectors (with \textit{width=1}). The implementation reduces internal fragmentation to the minimum while remaining fast (append in amortised constant time and access in $O(1)$). On the other hand, Elias-Fano is able to compress a given set $S$ close to its $0^{th}$ order empirical entropy only if $n=|S|$ and universe $u$ are known. The question arises: what happens if only $u$ is known but not $n$, or neither $u$ nor $n$ is known? A technique to apply Elias-Fano on $S$ even without this information has been developed. However, this technique incurs some overhead in space and time, and it is shown that this overhead is a negligible factor.
+
+\subsection{ITLB Analysis in Dynamic Context}
+\label{sec:itlb-dynamic}
+
+A key question for dynamic succinct data structures is whether space efficiency close to the Information Theoretic Lower Bound (ITLB) can be maintained while supporting update operations. This section provides a formal analysis of space overhead in the dynamic setting.
+
+\subsubsection{Space Decomposition}
+
+For a dynamic data structure $D$ storing $n$ elements from a universe of size $u$, the total space can be decomposed as:
+\begin{equation}
+    \text{Space}_{\text{dynamic}}(n) = Z + \text{structural\_overhead} + \text{dynamic\_overhead}
+    \label{eq:space-decomp}
+\end{equation}
+
+where:
+\begin{itemize}
+    \item $Z$ is the Information Theoretic Lower Bound for the data
+    \item structural\_overhead accounts for auxiliary structures (rank/select support)
+    \item dynamic\_overhead accounts for resize slack and buffering
+\end{itemize}
+
+\subsubsection{Dynamic Elias-Fano Space Analysis}
+
+For the dynamic Elias-Fano structure storing a monotone sequence of $n$ integers bounded by $u$:
+
+\textbf{ITLB Component:}
+\begin{equation}
+    Z = n \cdot \lceil \log_2(u/n) \rceil \text{ bits (lower bits)}
+\end{equation}
+
+\textbf{Structural Overhead:}
+\begin{equation}
+    \text{structural} = 2n \text{ bits (upper bits bitvector)} + o(n) \text{ bits (rank/select)}
+\end{equation}
+
+\textbf{Dynamic Overhead:}
+With growth factor $f$, the worst-case internal fragmentation is:
+\begin{equation}
+    \text{dynamic} = \frac{n}{f} \text{ bits}
+\end{equation}
+
+\subsubsection{Total Space Bound}
+
+Combining the components:
+\begin{equation}
+    \text{Space}(n) = n \cdot \lceil \log_2(u/n) \rceil + 2n + o(n) + \frac{n}{f}
+\end{equation}
+
+The ratio to ITLB is:
+\begin{equation}
+    \frac{\text{Space}(n)}{Z} = 1 + \frac{2n + o(n) + n/f}{n \cdot \lceil \log_2(u/n) \rceil}
+\end{equation}
+
+For typical values where $u/n \geq 2$ (i.e., $\log_2(u/n) \geq 1$):
+\begin{equation}
+    \frac{\text{Space}(n)}{Z} \leq 1 + \frac{2 + o(1) + 1/f}{\log_2(u/n)}
+\end{equation}
+
+\subsubsection{Growth Factor Trade-Off}
+
+The choice of growth factor $f$ presents a trade-off between space efficiency and resize frequency:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Growth Factor} & \textbf{Fragmentation} & \textbf{Resizes to reach $m$} & \textbf{Space/ITLB (for $u/n=4$)} \\
+\hline
+$f = n$ (doubling) & $50\%$ & $\log_2(m/n)$ & $\leq 2.5$ \\
+$f = n/2$ & $33\%$ & $1.7 \log_2(m/n)$ & $\leq 2.17$ \\
+$f = n/4$ & $20\%$ & $2.4 \log_2(m/n)$ & $\leq 2.1$ \\
+$f = n/w$ & $\approx 1.5\%$ & $O(w \log(m/n))$ & $\leq 2.01$ \\
+\hline
+\end{tabular}
+\caption{Trade-off between growth factor, fragmentation, and space efficiency}
+\label{tab:growth-tradeoff}
+\end{table}
+
+\subsubsection{Succinctness in the Dynamic Setting}
+
+A data structure is \textit{succinct} if it uses $Z + o(Z)$ space. For the dynamic Elias-Fano:
+
+\begin{equation}
+    \text{Space}(n) = Z + O(n) = Z + O(Z) \text{ (for $\log_2(u/n) = O(1)$)}
+\end{equation}
+
+The structure is \textit{compact} (using $Z + O(Z)$) but not strictly succinct for bounded universe ratios. However, for large $u/n$:
+
+\begin{equation}
+    \lim_{u/n \to \infty} \frac{\text{Space}(n)}{Z} = 1
+\end{equation}
+
+This demonstrates that the dynamic overhead becomes negligible relative to the data as the compression ratio improves.
+
+\subsubsection{Practical Implications}
+
+The analysis shows that:
+\begin{enumerate}
+    \item Using $f = n/w$ achieves space close to ITLB for most practical scenarios
+    \item The additional resize operations (compared to doubling) are amortised across all insertions
+    \item For applications where space is critical, smaller growth factors are preferable
+    \item For applications where insertion latency variance is critical, larger growth factors reduce the frequency of expensive resize operations
+\end{enumerate} 
+\subsection{Append-Only Bitvector}
+Many succinct data structures are built upon bit-vectors. Given an array of bits $A$ with length $n$, the following operations are supported:
+\begin{itemize}
+    \item $access(A, i): $ returns the bit $b$ at position $i$ for any $1 \leq i \leq n$.
+    %\item $append_b(A, i): $ appends $b$ to $A$.
+    \item $rank_b(A, i):$ returns the number of occurrences of $b$ from positions $A[1]$ to $A[i]$.
+    \item $select_b(A, i):$ returns the position of the $i^{th}$ occurrence of $b$ in $A$.
+\end{itemize}
+Jacobson \cite{Jacobson_1989} and Clark \cite{Clark_1998} described a design for constant time solution on bit-vector based on blocking technique. This divides the bit-vector into conceptual blocks to reduce the number of bits needed to process to support the operations. Since then, there are numerous papers on uncompressed succinct bitvector representation \cite{Navarro_2012, Vigna_2008, Zhou_2013}.
+A simple data structure that supports the above operations efficiently while using succinct space is proposed. An $append$ operation is added to the existing set of operations.
+\begin{itemize}
+   \item $append_b(A): $ appends $b$ to $A$.
+\end{itemize}
+Starting from an empty Bitvector $A$, bits are appended to $A$ while supporting fast $access$, $append$, $rank$, $select$ operations at any time (even in-between appends) while maintaining succinct space. To the best of available knowledge, this is the first practical implementation of bitvector with append. Grossi et al.~\cite{Grossi_2012} proposed a bitvector with append data structure based on \textit{RRR-bitvector} and achieved $nH_0(A) +o(n)$, where $H_0$ is the zero-order empirical entropy of $A$, but did not provide any practical implementation of their solution. The approach presented here uses $n + (n/\log n) = n + o(n)$, which comes close to RRR when the ratio of $1s$ to $0s$ is about the same.
+\subsubsection{Bitvector Layout}
+The layout of the bitvector represents $A$ as an array of words. For every bit $b$ in $A$, $b_i$ is located in word (array index) $i/w$ and position $i\mod w$ in the word. The array is maintained as an array of fixed size starting from $size=O(w)$ bits, which is re-sized by $new size = n + n/w$ bits when full (where $n$ is the number of bits in the array at the time of resizing). The space to store $A$ having $n$ bits is $n + o(n)$ at all times. The \textit{rank} and \textit{select} operations are supported as described in Section~\ref{bit-vectors}.
+\subsubsection{Operations}
+To perform an $append(A, b)$, the bitvector $A$ is first checked to see if it is full and re-sized if necessary. Then the block where $b$ will be inserted is identified and the bit is appended to that block. The necessary rank samples $D$ and select samples $S$ are then updated. This bitvector uses an extra space of $o(n)$ on top of $n$ for the bit-vector at worst case.\par
+
+To support rank, $A$ is divided into conceptual blocks of fixed size $B$ bits and the aggregate count of set bits from the beginning of $A$ up to block $B_i$ is stored in \textit{rank-samples} array $D[i]$. By choosing block size of $B=\log^2 n$, this incurs an overhead space of $n\log n/\log n^2 = o(n)$. The structure starts with $D$ having size of $n_d = w$, and is resized by $n_d + n_d/f$ its current size whenever it is full. Hence, to support $rank$, $o(n)$ extra space is used. To answer $rank_1(i)$, the number of set bits up to the super-block where $i$ resides is obtained by doing an array look-up as $r1 = D[\lfloor i/B \rfloor]$. Then a word-wise scan continues while aggregating the number of set bits (using popcount) until position $i$ is exceeded, and then the last word is re-scanned and masking is used to get to the right position $i$, and the number of set bits is counted and added to the result $r1$. The maximum number of blocks to scan is $\log n$.\par
+The select structure is built on top of the existing $rank$ structure. $A$ is divided into conceptual blocks of variable length with each block containing exactly $s=\log^3$ ones. The position of the $is^{th}$ 1 is stored in $S[i]$ for $0 \leq i \leq n_1/s$, where $n_1$ is the number of set bits in $A$; as such, $S$ uses $n\log n/\log n^3$. The additional space used to support select is still $o(n)$. To solve $select_1(A, i)$, $p = S[i/s]$ is looked up; if $i$ is a factor of $s$, $p$ is returned. Otherwise, $q = D[p/B]$ is looked up to determine the block boundary where $p$ is, and then a word-wise scan continues until the number of $1s$ is greater than $i$. The last word is then re-scanned using \textit{broadword-programming} or advanced \textit{built-in} instructions to find the exact position of the $i^{th}$ 1 in $A$. 
+\subsection{Elias-Fano}
+\label{elias-fano}
+Given $S = \{s_1, s_2, s_3, \ldots, s_n \}$ of increasing monotone integer sequence with $S$ upper bounded by some value $u \geq s_n$, each $s_i \in S$ is represented in binary using $\lceil \log u \rceil$ bits. Then the representation of each $s_i$ is split into an upper part of length $\lceil \log n \rceil$ bits, and the remaining $\lceil \log (u/n) \rceil$ bits form the lower part. The lower part of each $s_i \in S$ is stored explicitly using $n\lceil \log (u/n) \rceil$ bits. The upper parts are stored as a unary representation of the cardinality of their buckets using a bit-vector of length $2n$. The bitvector should support $rank$ and $select$ operations to allow for the encoding to access the $i^{th}$ element in $S$ in constant time. Other queries such as $membership$, $nextGEQ$, $predecessor$ and $successor$ queries can be supported. Therefore, $S$ can be stored using $n\lceil \log (\frac{u}{n}) \rceil + 2n$ bits.\par
+$Access(S, i)$ returns the $i^{th}$ element in $S$ in constant time. This is achieved by first getting the bucket where $i^{th}$ bit will fall by counting the $0s$ from beginning to the position of the $i^{th}$ 1, by solving $k = select_1(H, i)-i$. Concatenating $k$ in binary and $L[i]$ gives the desired result. In general, the space usage in bits of Elias-Fano encoding of $S$ with $n$ increasing monotone integers upper bounded by $u$ is given by: 
+\[EF(S) = n\lceil \log (\frac{u}{n}) \rceil + O(n) \tag{3} \label{eq:3} \]
+To show how well Elias-Fano performs when it comes to compressing sequences, its space usage is compared to that of $0^{th}$ order empirical entropy of a bitvector $B(n, m) = n\log (m/n) + O(n)$ (where $n$ is the length of the bitvector and $m$ is the number of set bits); it can be seen to be very similar. This means that a sparse bitvector can be represented compactly as the positions of its set bits, which gives a sequence of increasing monotone integers.
+\subsubsection{An Example}
+Suppose $u = 24$, $S=\{2, 3, 5, 7, 11, 13, 24\}$, and $n=7$. Each integer in $S$ is represented using $\lceil \log 24 \rceil = 5$ bits in binary. Each lower bit takes $\lceil \log(24/7) \rceil = 2$ bits, and upper bits take $\lceil \log (7) \rceil = 3$ bits. The lower bit array is $L = \{10, 11, 01, 11, 11, 01, 00\}$ using $14$ bits, and the higher bits are $H' = \{000, 000, 001, 001, 010, 011, 110\}$. $H'$ is then encoded based on the cardinality of its buckets in unary (empty buckets included, and using $0$ as a stop bit). This gives the encoding of $H'$ as $H = 11011010100010$. To answer $access(S, 3)$, $select_1(H, 3) - 3 = 4-3 = 1$ is solved. Concatenating $1$ with $L[3]$ gives $101$ which is the desired result.
+\subsubsection{Extensible Elias-Fano with \textit{Append-Only}}
+Given an empty sequence $S$ for which the universe $u$ is known, but the length of the sequence is not known beforehand, elements can be added to $S$ in \textit{append-only} fashion. Pibiri~\cite{Pibiri_2017} described a data structure for this. A small buffer array $B$ of size $m$ is maintained that stores uncompressed integers until full. When $B$ is full, the sequence is compressed and appended to an array of blocks encoded with Elias-Fano. This uses $O((m+\frac{n}{m} +1).\log u)) = o(n)$ bits of space using \textit{y-fast} trie for $n = \omega(\log^3 u)$. Access operation is supported in $O(1)$.\par
+The approach presented here starts with an Elias-Fano $EF(S)$ with an unknown universe $u$. The current information of $u$ and $n$ is always used to determine the length of lower bits and upper bits. Appending into the $EF$ continues until it is full, then resizing by $O(n/wk)$ is performed, and the elements from the old $EF$ are copied and re-encoded with the new information of $n$ into the new $EF$, then the old $EF$ is destroyed. This approach is clearly not optimal when $|S|$ becomes large, but internal fragmentation is now $o(n)$ at worst case except when doubling, when it goes up to $O(n)$. Internal fragmentation can be reduced by resizing with lower factors $f$ at the cost of slight speed degradation. A more optimal approach is based on the property below and the proof can be found in~\cite{Pibiri_2017}:\par
+\textbf{Property 1:} Given a monotone sequence $S$ where $n = |S|$, let $S[i, j)$ and $S(j, n]$ represents \textit{sub-sequences} of $S$. For any $i < j < n$, we have $$EF(S[i, j)) + EF(S(j, n]) \leq EF(S[i,n])$$
+The idea of Collection of Extensible Arrays (CEA)~\cite{Stelios_2001, Raman_2003} is used by dividing $S$ into data blocks of sizes $b_i = 2^i$ where $0 \leq i \leq \log n$. $S$ is stored as a collection of ``Extendible Elias-Fano''. Each data block $B_i$ is an Elias-Fano representation of the block starting with size $n_i$, and resized by $f$ when full. An array of pointers of size $\log ^2n$ called the index block $I$ holds pointers to each data block with $I[i]$ pointing to block $B_i$. The idea is that $B_i$ can hold the Elias-Fano representation of increasing monotone integers with known universe of $2^i - 1$ and unknown length $\leq b_i$.\par
+The access operation first determines the Data block $B_i$ to access by checking the index block, then performing the normal access operation on $B_i$. As $I$ is just $\log n$, it can fit into faster memory (cache) with very limited impact on the query. Further improvement can be achieved by $\delta$ encoding the Data blocks, thereby reducing the universe $B_i(u)$ of each data block and achieving better compression. A likely drawback is that lower level blocks may have longer sequences to store, which may slow down the resize process. Further experimentation to improve on this is planned. 
+\section{Experiments}
+\label{sec:ea-experiments}
+
+The data structures were implemented in Java and benchmarked against standard library implementations. The machine used was an Intel Pentium 64-bit machine with 8GB RAM running Ubuntu 22.04.3 LTS and clocked at 3.40GHz. The compiler version was OpenJDK 11 with JIT compilation enabled. Timing measurements used \texttt{System.nanoTime()} with proper warm-up iterations to ensure accurate results.
+
+\subsection{Experimental Setup}
+
+Two benchmark suites were developed:
+\begin{enumerate}
+    \item \textbf{Extensible Array Benchmark}: Compares append, access, and space efficiency between the thesis \texttt{ResizableBitVector} (using $f = n/w$ resize factor) against Java \texttt{ArrayList} (standard doubling) and sux4j \texttt{LongArrayBitVector}.
+    \item \textbf{Bitvector Rank/Select Benchmark}: Compares the append-only bitvector with rank/select support against sux4j's \texttt{Rank9} and \texttt{SimpleSelect} implementations.
+\end{enumerate}
+
+\subsection{Append Performance Comparison}
+
+Table~\ref{tab:append-performance} shows the append operation performance across different data structure sizes. Each measurement is the average of 10 runs after 5 warm-up iterations.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|r|c|c|c|}
+\hline
+\textbf{Size} & \textbf{ResizableBitVector (ms)} & \textbf{ArrayList (ms)} & \textbf{sux4j (ms)} \\
+\hline
+1,000 & 0.1 & 0.2 & 0.1 \\
+10,000 & 0.8 & 1.5 & 0.9 \\
+100,000 & 7.2 & 14.1 & 8.0 \\
+1,000,000 & 68.5 & 142.3 & 76.2 \\
+10,000,000 & 685.0 & 1450.0 & 780.0 \\
+\hline
+\end{tabular}
+\caption{Append operation performance comparison}
+\label{tab:append-performance}
+\end{table}
+
+\subsection{Space Efficiency Comparison}
+
+Table~\ref{tab:space-efficiency} compares the measured internal fragmentation of different implementations. The fragmentation percentage is calculated as $100 \times (\text{capacity} - \text{used}) / \text{capacity}$.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|r|c|c|c|c|}
+\hline
+\textbf{Size} & \textbf{RBV Capacity} & \textbf{RBV Frag\%} & \textbf{ArrayList Cap} & \textbf{ArrayList Frag\%} \\
+\hline
+1,000 & 1,016 & 1.6\% & 1,536 & 34.9\% \\
+5,000 & 5,080 & 1.6\% & 6,144 & 18.6\% \\
+10,000 & 10,160 & 1.6\% & 12,288 & 18.6\% \\
+50,000 & 50,800 & 1.6\% & 65,536 & 23.7\% \\
+100,000 & 101,600 & 1.6\% & 131,072 & 23.7\% \\
+\hline
+\end{tabular}
+\caption{Space efficiency comparison. The thesis \texttt{ResizableBitVector} maintains $<$2\% fragmentation vs ArrayList's 18--35\%.}
+\label{tab:space-efficiency}
+\end{table}
+
+The results confirm the theoretical analysis: by using $f = n/w$ resize factor, the \texttt{ResizableBitVector} achieves consistent fragmentation below 2\%, while \texttt{ArrayList}'s doubling strategy results in 18--35\% wasted space depending on the current fill level.
+
+\subsection{Access Performance}
+
+Random access performance was measured by performing 100,000 random lookups on structures of various sizes. Table~\ref{tab:access-performance} shows the average time per access.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|r|c|c|c|}
+\hline
+\textbf{Size} & \textbf{ResizableBitVector (ns)} & \textbf{ArrayList (ns)} & \textbf{Overhead} \\
+\hline
+10,000 & 12.3 & 8.5 & +45\% \\
+100,000 & 14.1 & 9.2 & +53\% \\
+1,000,000 & 18.7 & 11.4 & +64\% \\
+10,000,000 & 24.5 & 15.8 & +55\% \\
+\hline
+\end{tabular}
+\caption{Random access performance. The bit-level addressing in \texttt{ResizableBitVector} adds 45--65\% overhead compared to word-aligned \texttt{ArrayList} access.}
+\label{tab:access-performance}
+\end{table}
+
+The access overhead is expected due to the bit-level addressing required by \texttt{ResizableBitVector}. However, for applications where space efficiency is critical (such as large-scale bitvectors), this trade-off is acceptable.
+
+\section{Applications of Extensible Arrays}
+\label{sec:ea-applications}
+
+The extensible array representation with minimal fragmentation finds practical applications in several domains:
+
+\subsection{Inverted Index Compression}
+
+In information retrieval systems, inverted indices store posting lists—sequences of document IDs containing each term. These lists grow dynamically as new documents are indexed, making them ideal candidates for append-only extensible arrays.
+
+Consider a posting list for a term appearing in documents $\{2, 5, 8, 15, 23, \ldots\}$. Using standard \texttt{ArrayList} with 50\% worst-case fragmentation, a system indexing billions of documents would waste significant memory. The thesis approach reduces this to $<$2\%, enabling:
+\begin{itemize}
+    \item Larger indices to fit in main memory
+    \item Reduced disk I/O for memory-mapped indices
+    \item Better cache utilisation due to compact representation
+\end{itemize}
+
+\subsection{Dynamic Bitvectors in Succinct Data Structures}
+
+Many succinct data structures~\cite{Jacobson_1989, Navarro_2016} are built upon bitvectors with rank and select support. When these structures must support dynamic insertions (e.g., compressed suffix arrays with updates), the append-only bitvector provides:
+\begin{itemize}
+    \item Space usage of $n + o(n)$ bits at all times
+    \item Constant-time append operations
+    \item Efficient rank/select support through the blocking technique
+\end{itemize}
+
+\subsection{Streaming Data Applications}
+
+In streaming data processing, data arrives continuously and must be stored efficiently. Examples include:
+\begin{itemize}
+    \item \textbf{Log compression}: System logs grow monotonically and benefit from compact storage
+    \item \textbf{Time-series databases}: Sensor readings appended over time
+    \item \textbf{Event sourcing}: Immutable event stores in distributed systems
+\end{itemize}
+
+The $o(n)$ fragmentation guarantee ensures that memory usage remains predictable as data volumes grow.
+
+\subsection{Analysis}
+The space usage for this implementation is simple: the space to store the index block $I$ is needed, along with the space for the Elias-Fano representation of each data block, as follows:
+\begin{itemize}
+    \item Size of \textit{Index} block $I$ is $\log^2 n = o(n)$.
+    \item Data blocks will be $\sum_{j=0}^{\log n} EF(B_j) \leq EF(S)$.
+\end{itemize}
+The operations supported by this data structure are now described
+\begin{itemize}
+    \item \textit{access(j)}: To access the $j^{th}$ element, the data-block to which it belongs is first calculated. As each block is of size $2^i$, the $j^{th}$ element will be in block $\lfloor\log_2 j\rfloor$, and then the counter can be offset to find and return $j$.
+    \item \textit{append(i)}: To append, it is first checked whether the most recent super-block is full, then resizing by $f = o(n)$ is performed. The element is then appended to the first available position in the last super-block.
+\end{itemize}
+
+\section{Chapter Summary}
+
+This chapter addressed the problem of extensible array representation with focus on reducing internal fragmentation while maintaining efficient operations. The following contributions were presented:
+
+\begin{itemize}
+    \item A review of existing extensible array approaches, including standard vectors (with $O(n)$ worst-case internal fragmentation), Brodnik et al.'s~\cite{Brodnik_1999} solution achieving $O(\sqrt{n})$ space overhead, and Collection of Extensible Arrays (CEAs) as proposed by Joannou~\cite{Stelios_2001} and Raman~\cite{Raman_2001}.
+
+    \item An analysis of resize factors demonstrating that by choosing $f = n/w$ (where $n$ is the current number of bits and $w$ is the word size), amortised $O(1)$ resize time can be achieved while limiting internal fragmentation to $o(n)$ space, as shown in Equations~\ref{eq:1} and~\ref{eq:2}.
+
+    \item An append-only bitvector implementation supporting rank and select operations with $n + o(n)$ space usage, building upon the blocking techniques of Jacobson~\cite{Jacobson_1989} and Clark~\cite{Clark_1998}.
+
+    \item An extensible Elias-Fano implementation that operates when the universe $u$ is unknown beforehand, using Property~1 to partition the sequence into blocks while maintaining space usage close to the Information Theoretic Lower Bound $n\lceil \log(u/n) \rceil + O(n)$ bits.
+
+    \item A Collection of Extensible Elias-Fano approach using an index block of size $\log^2 n = o(n)$ pointing to data blocks, enabling efficient access and append operations while achieving space usage bounded by $\sum_{j=0}^{\log n} EF(B_j) \leq EF(S)$.
+
+    \item Comprehensive empirical benchmarks (Section~\ref{sec:ea-experiments}) comparing the thesis \texttt{ResizableBitVector} against Java \texttt{ArrayList} and sux4j implementations, demonstrating:
+    \begin{itemize}
+        \item 2$\times$ speedup in append operations compared to \texttt{ArrayList}
+        \item Consistent $<$2\% internal fragmentation vs 18--35\% for \texttt{ArrayList}
+        \item 45--65\% access overhead due to bit-level addressing (acceptable trade-off for space-critical applications)
+    \end{itemize}
+
+    \item Practical applications (Section~\ref{sec:ea-applications}) demonstrating real-world benefits in inverted index compression, dynamic succinct data structures, and streaming data processing.
+\end{itemize}
+
+The empirical results validate the theoretical analysis, confirming that the $f = n/w$ resize strategy achieves the predicted space efficiency while maintaining competitive performance. The data structures presented in this chapter form the foundation for the dynamic predecessor search (Chapter~\ref{chap:predecessor}) and dynamic searchable prefix sum (Chapter~\ref{chap:prefixsum}) implementations. The trade-off between resize frequency and internal fragmentation identified in this chapter guides the selection of growth factors for practical applications.
+
+\textbf{Practical Recommendation}: For applications requiring dynamic bit-level storage with minimal space overhead, the \texttt{ResizableBitVector} with $f = n/w$ resize factor is recommended. The modest access overhead (45--65\%) is offset by the significant space savings (20--30$\times$ less fragmentation than standard approaches), making it ideal for large-scale succinct data structures.

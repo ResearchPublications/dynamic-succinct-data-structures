@@ -1,0 +1,56 @@
+\chapter{Introduction}
+\section{Overview}
+Big data refers to the massive volume of structured and unstructured data generated at unprecedented rates, necessitating innovative approaches for storage and processing. Digital devices, social media platforms, and IoT (Internet of Things) sensors contribute significantly to this exponential data growth. Estimates suggest that the global data volume could reach 175 zettabytes by 2025, driven by the increasing digitisation of various sectors including healthcare, finance, security, and manufacturing \cite{Coughlin_2018}. This rapid data expansion poses significant challenges for traditional storage solutions, which are often inadequate in terms of capacity and cost-efficiency. Consequently, there is a pressing need for advanced storage technologies such as distributed file systems and cloud storage, which offer scalability and flexibility. Equally important is the development of efficient processing algorithms capable of handling large-scale data analytics and processing. Technologies like Apache Hadoop, Apache Spark, and parallel processing systems are critical in managing and extracting insights from big data. As the volume and complexity of data continue to grow, ongoing advancements in both storage and processing are essential to harness their full potential in driving innovation and decision-making across various fields. The rate at which data grows necessitates an out-of-box approach to efficient storage and query processing.
+
+Traditional processing methods and algorithms are fast when dealing with such datasets but have high space usage requirements. One of the key challenges is to design data structures that are both space-efficient and time-efficient, meaning they use the least space possible while query operations remain fast. The most common approach is to compress the data by exploiting some of its properties, such as repetitiveness. Pre-processing also helps in speeding up subsequent queries (such as search queries) to the dataset. Compressing large datasets reduces space usage but may slow down queries due to the need to partially or fully decompress the data.
+
+\section{Motivation}
+Recent research focuses on ways to efficiently compress data while still allowing queries without full decompression. This approach carries several advantages: (i) reduced space usage, (ii) fitting more data in memory, and (iii) executing queries directly on compressed data. Succinct data structures~\cite{Jacobson_1989} are a specific class of data structures that aim to solve this problem by using minimal space while still providing fast query times. These structures are particularly useful in applications where memory is at a premium, such as DNA or protein sequencing, search engines, and large-scale text repositories like Wikipedia~\cite{Pibiri_2017}. Using information theory and data compression, the aim is to provide data structures that can fit into primary memory for processing. The challenge increases when the data is dynamic and requires updates (insertions and/or deletions), as the folklore approach of rebuilding the data structure is not optimal.
+
+Many algorithms for dynamic succinct data structures have been proposed that provide promising theoretical lower bounds, but some are either impractical or too complex to implement. This impracticality may be due to lack of available hardware or software technologies. With rapid developments in the hardware and software domain, these limitations can change. In this thesis, several of these algorithms are considered, implemented, and improved, with optimisations provided where applicable.
+
+\section{Research Questions}
+
+This thesis addresses the following quantified research questions:
+
+\begin{itemize}
+    \item \textbf{RQ1}: Can dynamic succinct data structures maintain space usage within a constant factor of the Information Theoretic Lower Bound while supporting efficient update operations?
+
+    \item \textbf{RQ2}: Can SIMD-based implementations of predecessor search achieve significant speedup over comparison-based approaches on small static sets?
+
+    \item \textbf{RQ3}: Can dynamic data structures support dynamic operations with amortised constant time while maintaining competitive query performance?
+\end{itemize}
+
+\section{Contributions}
+A range of dynamic data structures that provide improvements upon existing approaches and implementations is proposed in this thesis. These include Extensible Arrays that can be used in many applications, such as the Extensible Elias-Fano data structure. A detailed analysis of the experiments is also provided. More specifically, the contributions are as follows:
+
+\begin{itemize}
+    \item A simple and efficient algorithm for constructing Extensible Arrays (EA) is presented. Different approaches to the data structure are implemented along with heuristics that optimise them with excellent performance in space and speed. This is utilised to build an Extensible Elias-Fano structure that shows promising improvements over other implementations~\cite{Pibiri_2017}.
+
+    \item An engineered implementation of fast predecessor search data structure in small sets is provided. This implementation is built using Single-Instruction-Multiple-Data (SIMD) instructions to achieve parallelism. It is simple, practical, and achieves competitive speed and space usage. To the best of available knowledge, this is the first practical implementation of the work of Ajtai~\cite{AJTAI1984217} on small static integer sets.
+
+    \item An efficient implementation of a dynamic searchable prefix sum data structure with \textit{increment and search} is provided. This is built on the earlier data structures developed in this thesis and is competitive in speed and space usage.
+\end{itemize}
+
+\section{Thesis Organisation}
+The remainder of this thesis is organised as follows:
+
+\textbf{Chapter~2: Background and Tools} introduces the foundational concepts for succinct data structures, including models of computation, memory architecture, Information Theoretic Lower Bounds (ITLB), entropy, bit-vectors, and integer compression techniques.
+
+\textbf{Chapter~3: Research Methodology and Theoretical Framework} presents the Algorithm Engineering research paradigm, defines quantified research questions, establishes success criteria, describes the verification framework, and documents the computing environment.
+
+\textbf{Chapter~4: Extensible Array Representation} presents various implementations of Extensible Arrays (EA). The problem of resizing arrays is addressed, and a more efficient approach is proposed. The new EA is then utilised to build efficient Dynamic Elias-Fano implementations for various problem types.
+
+\textbf{Chapter~5: Fast Predecessor Search in Small Sets} addresses the problem of efficient predecessor search in small sets. An implementation based on Ajtai's~\cite{AJTAI1984217} work, previously perceived as impractical due to hardware limitations, is provided. Using SIMD instructions, the first practical implementation of constant time predecessor search on static integer sets is presented.
+
+\textbf{Chapter~6: Dynamic Searchable Prefix Sum} addresses the practical implementation of dynamic searchable prefix sums with \textit{select}. An implementation based on Dietz~\cite{Dietz_1989} is presented, along with optimisation methods to improve query performance.
+
+\textbf{Chapter~7: Conclusions and Future Work} presents the key findings and contributions, provides a reflective analysis of the research process, and discusses future research directions and open problems.
+
+\section{Chapter Summary}
+
+This chapter introduced the research context and motivation for the thesis. The challenges of processing and storing big data were presented, along with the need for space-efficient data structures that maintain fast query times. Succinct data structures were introduced as a promising approach to achieving near-optimal space usage while supporting efficient operations.
+
+Three research questions were formulated addressing: (1) maintaining space efficiency close to the Information Theoretic Lower Bound while supporting dynamic operations, (2) achieving significant speedup through SIMD-based predecessor search implementations, and (3) supporting dynamic operations with amortised constant time while maintaining competitive query performance.
+
+The contributions of this thesis were outlined, including extensible arrays with reduced fragmentation, fast predecessor search using SIMD instructions, and dynamic searchable prefix sum implementations. The organisation of the remaining chapters was presented, establishing the structure for the technical contributions that follow.

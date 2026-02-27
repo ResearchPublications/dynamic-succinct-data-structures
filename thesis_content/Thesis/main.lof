@@ -1,0 +1,14 @@
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Consecutive blocks of $2^i$ where $0 \leq i \leq \log n$}}{36}{}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Blind trie for $S = \{ 7, 85, 102, 200, 205, 232 \}$ showing the significant bit positions in the internal nodes and significant bit positions on edges. The leaves hold the index $i$ of $S[i]$}}{58}{}%
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Number of significant bit positions for various datasets}}{64}{}%
+\contentsline {figure}{\numberline {5.3}{\ignorespaces Time in seconds for $2^{27}$ $rank$ operations on various implementations}}{70}{}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {6.1}{\ignorespaces Balanced binary tree storing prefix sums of $A$}}{82}{}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }

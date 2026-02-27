@@ -1,0 +1,113 @@
+\chapter{Conclusions and Future Work}
+\label{chap:conclusion}
+
+This chapter concludes the thesis by summarising the research contributions, reflecting on the research process, and identifying directions for future research.
+
+\section{Summary of Contributions}
+
+Succinct data structures are an important component of data processing systems that enable faster and more cost-effective processing of voluminous data. This thesis focused on engineering dynamic data structures for integer compression, addressing the gap between theoretical algorithms and practical implementations.
+
+\subsection{Extensible Array Representation (Chapter~\ref{chap:extensible})}
+
+The problem of resizing arrays and its effects on internal fragmentation was investigated. A simple yet succinct solution to resizing arrays of non-standard word-size width using variable growth factors was proposed. The key contributions include:
+
+\begin{itemize}
+    \item An analysis demonstrating that using a growth factor of $f = n/w$ (where $n$ is the current size and $w$ is the word size) achieves amortised $O(1)$ append time while limiting internal fragmentation to $o(n)$ space.
+
+    \item An append-only dynamic bitvector implementation for the special case of $width=1$, supporting rank and select operations with $n + o(n)$ space usage.
+
+    \item An append-only dynamic Elias-Fano implementation that operates correctly even when the universe size $u$ is not known beforehand, achieving space usage close to the Information Theoretic Lower Bound.
+\end{itemize}
+
+\subsection{Fast Predecessor Search in Small Sets (Chapter~\ref{chap:predecessor})}
+
+The problem of constant-time predecessor search in small static integer sets was addressed. This problem was previously considered impractical due to hardware limitations. The key contributions include:
+
+\begin{itemize}
+    \item The first practical implementation of Ajtai's~\cite{AJTAI1984217} constant-time predecessor search algorithm, utilising pre-computed lookup tables indexed by compressed keys.
+
+    \item An implementation of Fredman's~\cite{FREDMAN1993424} method using AVX2 SIMD instructions, achieving constant-time rank operations without large lookup tables.
+
+    \item An improved variant of Fredman's method that exploits the relationship between XOR difference and longest common prefix, achieving faster query times than the original formulation.
+
+    \item An investigation into reducing the number of significant bit positions through input shifting, demonstrating potential for reducing space overhead in lookup-table-based approaches.
+\end{itemize}
+
+\subsection{Dynamic Searchable Prefix Sum (Chapter~\ref{chap:prefixsum})}
+
+The problem of dynamic searchable prefix sum with increment and select operations was investigated. Building on the data structures from earlier chapters, the key contributions include:
+
+\begin{itemize}
+    \item An implementation based on Dietz's~\cite{Dietz_1989} lazy synchronisation technique, using SIMD registers to store buffer arrays for amortised constant-time updates.
+
+    \item Integration with the improved Fredman predecessor search to support constant-time select operations on prefix sums.
+
+    \item A space-efficient design using $O(n \log n) + o(n)$ bits while maintaining competitive query performance.
+\end{itemize}
+
+\section{Reflective Analysis of the Research Process}
+
+The research process followed the Algorithm Engineering methodology, iterating between theoretical analysis and empirical evaluation. Several insights emerged from this process:
+
+\textbf{Hardware Evolution}: The feasibility of implementing constant-time predecessor search was enabled by advances in processor instruction sets (AVX2, BMI2). Algorithms that were impractical two decades ago are now implementable and efficient. This suggests that theoretical algorithms should be periodically re-evaluated as hardware capabilities evolve.
+
+\textbf{Constants Matter}: While asymptotic complexity provides important theoretical guarantees, the constants hidden in $O(\cdot)$ notation significantly impact practical performance. The improved Fredman method demonstrates that reducing the number of instructions, even within the same asymptotic complexity class, yields measurable speedups.
+
+\textbf{Composition of Data Structures}: The dynamic searchable prefix sum implementation demonstrates how simpler data structures (extensible arrays, predecessor search) can be composed to build more complex structures while preserving efficiency guarantees. This compositional approach is a valuable design pattern for succinct data structures.
+
+\textbf{Trade-offs}: Throughout the research, trade-offs between space and time were encountered. The Ajtai method achieves faster queries at the cost of $O(2^b)$ space for lookup tables, while the Fredman method eliminates this space overhead but requires more computation. Understanding and quantifying such trade-offs is essential for practical applications.
+
+\section{Limitations}
+
+Several limitations of the current work should be acknowledged:
+
+\begin{itemize}
+    \item The predecessor search implementations are limited to static sets. Dynamic insertions and deletions, as addressed by Dinklage et al.~\cite{Patrick_2021}, were not considered.
+
+    \item The experimental evaluation focused on synthetic datasets. Evaluation on real-world datasets from specific application domains would provide additional insights into practical performance.
+
+    \item The implementations rely on specific instruction sets (AVX2, BMI2) available on modern Intel and AMD processors. Older processors without these extensions would require fallback implementations.
+
+\end{itemize}
+
+\section{Future Research Directions}
+
+Several promising directions for future research emerge from this work:
+
+\subsection{Short-Term Extensions}
+
+\begin{itemize}
+    \item \textbf{Empirical Evaluation}: Comprehensive benchmarking of the dynamic prefix sum implementation against existing solutions, with statistical analysis including confidence intervals.
+
+    \item \textbf{Dinklage Comparison}: Implementing and comparing against the dynamic predecessor structures of Dinklage et al.~\cite{Patrick_2021} to evaluate the trade-offs between static and dynamic approaches.
+
+    \item \textbf{Real-World Case Studies}: Applying the proposed data structures to specific application domains such as inverted index compression for information retrieval systems.
+\end{itemize}
+
+\subsection{Medium-Term Research}
+
+\begin{itemize}
+    \item \textbf{Optimal Shifting}: Developing algorithms to determine the optimal shift value $x$ that minimises the number of significant bit positions in a set, potentially enabling smaller lookup tables for Ajtai's method.
+
+    \item \textbf{AVX-512 Extensions}: Exploiting 512-bit SIMD registers to increase the set sizes that can be processed in constant time, extending the applicability of the predecessor search techniques.
+
+    \item \textbf{Cache-Oblivious Variants}: Designing cache-oblivious versions of the data structures that perform well across different memory hierarchies without requiring tuning for specific cache sizes.
+\end{itemize}
+
+\subsection{Long-Term Vision}
+
+\begin{itemize}
+    \item \textbf{GPU Acceleration}: Investigating the use of GPU computing for parallel construction and querying of succinct data structures on massive datasets.
+
+    \item \textbf{Persistent Storage}: Extending the dynamic data structures to support persistence, enabling their use in database systems and long-running applications.
+
+    \item \textbf{Formal Verification}: Applying formal verification techniques to prove the correctness of the implementations, providing stronger guarantees than testing alone.
+\end{itemize}
+
+\section{Concluding Remarks}
+
+This thesis has demonstrated that theoretical advances in succinct data structures can be translated into practical implementations through careful engineering and exploitation of modern hardware capabilities. The Algorithm Engineering methodology, combining theoretical analysis with empirical evaluation, proved effective for bridging the gap between asymptotic complexity bounds and real-world performance.
+
+The increasing availability of SIMD instructions and bit manipulation primitives in commodity processors suggests that many other theoretical algorithms may be ripe for practical implementation. As data volumes continue to grow exponentially, succinct data structures that minimise space usage while maintaining fast query times will become increasingly important for efficient data processing systems.
+
+The open problems and future directions identified in this thesis provide opportunities for continued research at the intersection of algorithm theory and systems engineering, with potential impact on applications ranging from search engines to bioinformatics to cloud computing infrastructure.

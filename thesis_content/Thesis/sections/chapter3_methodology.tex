@@ -1,0 +1,211 @@
+\chapter{Research Methodology and Theoretical Framework}
+\label{chap:methodology}
+
+This chapter presents the research methodology employed in this thesis, defines quantified research questions, establishes success criteria, and describes the verification framework used to validate the proposed data structures. The computing environment specifications are also documented to ensure reproducibility of experimental results.
+
+\section{Research Paradigm: Algorithm Engineering}
+
+The research presented in this thesis follows the \textit{Algorithm Engineering} paradigm~\cite{Sanders_2009}, which bridges the gap between theoretical algorithm design and practical implementation. Unlike traditional algorithm analysis that focuses primarily on asymptotic complexity, algorithm engineering emphasises the following iterative cycle:
+
+\begin{enumerate}
+    \item \textbf{Design}: Development of algorithms based on theoretical foundations and complexity analysis.
+    \item \textbf{Analysis}: Formal verification of correctness and derivation of theoretical bounds.
+    \item \textbf{Implementation}: Translation of algorithms into efficient code, considering hardware characteristics.
+    \item \textbf{Experimentation}: Empirical evaluation using realistic workloads and datasets.
+    \item \textbf{Refinement}: Iterative improvement based on experimental insights.
+\end{enumerate}
+
+This methodology is particularly appropriate for succinct data structures, where theoretical bounds often involve constants that significantly impact practical performance. The gap between theoretical models (such as the RAM model) and actual hardware behaviour (cache hierarchies, branch prediction, SIMD capabilities) necessitates empirical validation of theoretical claims.
+
+\section{Research Questions}
+
+Three quantified research questions guide the investigations presented in this thesis:
+
+\subsection{RQ1: Dynamic Space Efficiency}
+\textit{Can dynamic succinct data structures maintain space usage within a constant factor of the Information Theoretic Lower Bound (ITLB) while supporting efficient update operations?}
+
+\textbf{Quantified Formulation:} Given a dynamic data structure $D$ storing $n$ elements from a universe of size $u$, the space requirement $S(D)$ should satisfy:
+\begin{equation}
+    S(D) \leq c \cdot \text{ITLB}(n, u) + o(\text{ITLB}(n, u))
+\end{equation}
+where $c$ is a small constant and the $o(\cdot)$ term represents structural overhead that becomes negligible for large $n$.
+
+For monotone integer sequences using Elias-Fano encoding, the ITLB is:
+\begin{equation}
+    \text{ITLB}(n, u) = n \cdot \lceil \log_2(u/n) \rceil + 2n \text{ bits}
+\end{equation}
+
+\subsection{RQ2: Small-Set Query Latency}
+\textit{Can SIMD-based implementations of predecessor search achieve constant-time query latency on small static sets, and by what factor do they outperform traditional approaches?}
+
+\textbf{Quantified Formulation:} For a set $S$ of $k$ integers where $k \leq 256$, predecessor queries should be answerable in:
+\begin{equation}
+    T_{\text{query}}(k) = O(1) \text{ with } T_{\text{query}} < T_{\text{binary}}
+\end{equation}
+where $T_{\text{binary}}$ is the query time of optimised binary search. The speedup is achieved through parallel comparison using SIMD registers.
+
+\subsection{RQ3: Update Efficiency in Dynamic Structures}
+\textit{Can dynamic data structures support dynamic operations with amortised constant time while maintaining competitive query performance?}
+
+\textbf{Quantified Formulation:} For a dynamic structure supporting updates, the amortised cost of $n$ operations should satisfy:
+\begin{equation}
+    \sum_{i=1}^{n} T_{\text{update}}(i) \leq c' \cdot n
+\end{equation}
+where $c'$ is a small constant independent of $n$. Additionally, query operations (access, rank, select, nextGEQ) should remain within a constant factor of static implementations.
+
+\section{Success Criteria}
+
+The success of the proposed data structures is evaluated against the following quantified criteria:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Criterion} & \textbf{Target} & \textbf{Measurement Method} \\
+\hline
+Space efficiency & Constant factor of ITLB & Bits per element ratio \\
+Query latency (small sets) & Faster than binary search & Nanoseconds per query \\
+Update latency (dynamic) & Amortised $O(1)$ & Total time / $n$ operations \\
+Correctness & 100\% pass rate & Automated test suite \\
+Reproducibility & $< 5\%$ variance & Standard deviation over 20+ runs \\
+\hline
+\end{tabular}
+\caption{Quantified success criteria for proposed data structures}
+\label{tab:success-criteria}
+\end{table}
+
+\section{Verification Framework}
+
+Correctness verification is essential for data structures where subtle implementation errors can produce incorrect results that may go undetected. The verification approach employed in this thesis consists of three complementary methods:
+
+\subsection{Invariant-Based Verification}
+
+Each data structure maintains specific invariants that must hold after every operation. These invariants are formally specified and verified through assertions in the implementation.
+
+\textbf{Extensible Array Invariant:} For an extensible array $A$ with logical size $n$ and physical capacity $c$:
+\begin{itemize}
+    \item $0 \leq n \leq c$
+    \item All elements at indices $0, 1, \ldots, n-1$ are valid and accessible
+    \item After \texttt{append(x)}: $A[n'] = x$ where $n' = n + 1$
+\end{itemize}
+
+\textbf{Elias-Fano Invariant:} For an Elias-Fano structure storing monotone sequence $S$:
+\begin{itemize}
+    \item $S[i] \leq S[i+1]$ for all $0 \leq i < n-1$ (monotonicity)
+    \item $\text{select}_1(\text{high\_bits}, i) - i = \lfloor S[i] / 2^\ell \rfloor$ (high-bit correctness)
+    \item $\text{low\_bits}[i] = S[i] \mod 2^\ell$ (low-bit correctness)
+\end{itemize}
+
+\subsection{Hoare Triple Specification}
+
+Critical operations are specified using Hoare triples $\{P\} \text{ operation } \{Q\}$, where $P$ is the precondition and $Q$ is the postcondition.
+
+\textbf{Example - GROW() operation:}
+\begin{align*}
+    \{&\text{valid}(A) \land n = c \land \forall i \in [0, n): A[i] = v_i\} \\
+    &\texttt{GROW()} \\
+    \{&\text{valid}(A) \land c' > c \land n' = n \land \forall i \in [0, n): A[i] = v_i\}
+\end{align*}
+
+This specification ensures that the GROW operation increases capacity while preserving all existing elements and their values.
+
+\subsection{Test Oracle Methodology}
+
+Implementations are validated against reference implementations (test oracles) that prioritise correctness over efficiency. For each proposed data structure:
+
+\begin{enumerate}
+    \item A na\"ive reference implementation is developed using standard library containers
+    \item Random test sequences are generated with controlled parameters
+    \item Results from the optimised implementation are compared against the oracle
+    \item Discrepancies trigger detailed debugging and invariant checking
+\end{enumerate}
+
+\section{Computing Environment}
+\label{sec:computing-env}
+
+All experiments reported in this thesis were conducted on the following hardware and software configuration:
+
+\subsection{Hardware Specifications}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Component} & \textbf{Specification} \\
+\hline
+Processor & Intel Core i5-4460 @ 3.40GHz \\
+Architecture & x86\_64 (64-bit) \\
+SIMD Support & SSE4.2, AVX, AVX2, BMI1, BMI2 \\
+Memory & 8 GB DDR3 \\
+L1 Cache (per core) & 32 KB data + 32 KB instruction \\
+L2 Cache (per core) & 256 KB \\
+L3 Cache (shared) & 6 MB \\
+\hline
+\end{tabular}
+\caption{Hardware specifications for experimental evaluation}
+\label{tab:hardware}
+\end{table}
+
+\subsection{Software Environment}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Component} & \textbf{Version} \\
+\hline
+Operating System & Ubuntu 22.04.3 LTS \\
+Kernel & Linux 5.15.0 \\
+Java Runtime & OpenJDK 11.0.20 \\
+C++ Compiler & g++ 11.4.0 \\
+Build System (Java) & Apache Maven 3.9.x \\
+Optimisation Flags & -O3 -march=native \\
+\hline
+\end{tabular}
+\caption{Software environment specifications}
+\label{tab:software}
+\end{table}
+
+\subsection{SIMD Capabilities}
+
+The experiments in Chapter~\ref{chap:predecessor} utilise Intel AVX2 SIMD instructions with 256-bit registers, which enable parallel processing of multiple data elements in a single instruction. The processor supports the following instruction set extensions:
+\begin{itemize}
+    \item \textbf{AVX2}: 256-bit integer and floating-point SIMD operations
+    \item \textbf{BMI1/BMI2}: Bit manipulation instructions including PEXT, PDEP, LZCNT, and TZCNT
+    \item \textbf{SSE4.2}: String and text processing instructions
+\end{itemize}
+
+These capabilities are essential for the constant-time predecessor search implementations described in Chapter~\ref{chap:predecessor}, following the methodology established by Dinklage et al.~\cite{Patrick_2021}.
+
+\section{Experimental Methodology}
+
+\subsection{Benchmark Protocol}
+
+To ensure statistical validity and reproducibility, all experiments follow a standardised protocol:
+
+\begin{enumerate}
+    \item \textbf{Warm-up Phase}: Execute 5 warm-up iterations to stabilise JIT compilation (Java) or cache state
+    \item \textbf{Measurement Phase}: Execute minimum 20 timed iterations
+    \item \textbf{Isolation}: Pin experiments to performance cores where possible; disable background processes
+    \item \textbf{Randomisation}: Use fixed random seeds for reproducibility; document seeds in supplementary materials
+    \item \textbf{Statistical Reporting}: Report mean, standard deviation, and 95\% confidence intervals
+\end{enumerate}
+
+\subsection{Dataset Generation}
+
+Experimental datasets are generated synthetically with controlled parameters:
+
+\begin{itemize}
+    \item \textbf{Monotone sequences}: Generated by cumulative sum of random gaps drawn from specified distributions (uniform, exponential, Zipfian)
+    \item \textbf{Set sizes}: Varied across $n \in \{10^3, 10^4, 10^5, 10^6, 10^7\}$
+    \item \textbf{Universe sizes}: Tested with $u/n$ ratios from 1.1 to 1000
+    \item \textbf{Query workloads}: $2^{25}$ random queries per configuration
+\end{itemize}
+
+\section{Ethical Considerations}
+
+The research presented in this thesis involves only computational experiments on synthetic data. No human subjects, personal data, or sensitive information were used. All software dependencies are open-source with compatible licences (Apache 2.0, MIT, BSD). The experimental code and data are available for academic reproducibility.
+
+\section{Chapter Summary}
+
+This chapter established the methodological foundation for the research presented in this thesis. The Algorithm Engineering paradigm provides a framework for bridging theoretical analysis and practical implementation. Three quantified research questions (RQ1--RQ3) guide the investigations, with explicit success criteria enabling objective evaluation. A comprehensive verification framework ensures correctness through invariant checking, Hoare triple specifications, and test oracle comparisons. The computing environment has been documented to support reproducibility, and the experimental methodology ensures statistical validity of results. Subsequent chapters apply this methodology to specific data structures: extensible arrays (Chapter~\ref{chap:extensible}), fast predecessor search (Chapter~\ref{chap:predecessor}), and dynamic searchable prefix sums (Chapter~\ref{chap:prefixsum}).

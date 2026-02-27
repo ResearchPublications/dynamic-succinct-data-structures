@@ -1,0 +1,297 @@
+\chapter{Benchmark Code and Project Statistics}
+\label{appendix:benchmarks}
+
+This appendix provides the benchmark code used for empirical evaluation and statistics about the implementation.
+
+\section{Project Statistics}
+\label{sec:project-stats}
+
+Table~\ref{tab:loc} summarises the lines of code for each component of the implementation.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|r|r|}
+\hline
+\textbf{Chapter} & \textbf{Component} & \textbf{Language} & \textbf{LOC} \\
+\hline
+\multicolumn{4}{|c|}{\textit{Chapter 4: Extensible Array}} \\
+\hline
+& ResizableBitVector.java & Java & 89 \\
+& DynamicArray.java & Java & 156 \\
+& ClassicEliasFano.java & Java & 234 \\
+& EliasFanoUniverseKnown.java & Java & 312 \\
+& EliasFanoBothUnknown.java & Java & 287 \\
+& ExtensibleArrayBenchmark.java & Java & 258 \\
+& BitvectorBenchmark.java & Java & 247 \\
+\hline
+\multicolumn{3}{|r|}{\textit{Subtotal (Chapter 4)}} & 1,583 \\
+\hline
+\multicolumn{4}{|c|}{\textit{Chapter 5: Fast Predecessor Search}} \\
+\hline
+& All.cpp & C++ & 512 \\
+& BranchingBits.java & Java & 187 \\
+& classic\_predecessors.hpp & C++ & 423 \\
+& run.sh & Shell & 45 \\
+\hline
+\multicolumn{3}{|r|}{\textit{Subtotal (Chapter 5)}} & 1,167 \\
+\hline
+\multicolumn{4}{|c|}{\textit{Chapter 6: Dynamic Prefix Sum}} \\
+\hline
+& PrefixSum.cpp & C++ & 234 \\
+& DynamicPrefixSum.hpp & C++ & 189 \\
+\hline
+\multicolumn{3}{|r|}{\textit{Subtotal (Chapter 6)}} & 423 \\
+\hline
+\multicolumn{4}{|c|}{\textit{Supporting Code}} \\
+\hline
+& Build scripts \& configuration & Various & 156 \\
+& Test harnesses & Java/C++ & 312 \\
+\hline
+\multicolumn{3}{|r|}{\textit{Subtotal (Support)}} & 468 \\
+\hline
+\hline
+\multicolumn{3}{|r|}{\textbf{Total}} & \textbf{3,641} \\
+\hline
+\end{tabular}
+\caption{Lines of code by component. Excludes blank lines and comments. Third-party libraries (sux4j, fastutil) are not counted.}
+\label{tab:loc}
+\end{table}
+
+\section{Extensible Array Benchmark}
+\label{sec:ea-benchmark}
+
+\begin{lstlisting}[language=Java, caption={ExtensibleArrayBenchmark.java - Comparing resize strategies}, label={lst:ea-bench}]
+package com.chp3.efano;
+
+import it.unimi.dsi.bits.LongArrayBitVector;
+import java.util.ArrayList;
+import java.util.Random;
+
+public class ExtensibleArrayBenchmark {
+    private static final int WARMUP = 5;
+    private static final int ITERATIONS = 10;
+    private static final int[] SIZES =
+        {1000, 10000, 100000, 1000000, 10000000};
+
+    public static void main(String[] args) {
+        System.out.println("Size\tRBV(ms)\tArrayList(ms)" +
+                          "\tSux4j(ms)\tRBV_Space\tAL_Space");
+
+        for (int size : SIZES) {
+            runBenchmark(size);
+        }
+    }
+
+    private static void runBenchmark(int size) {
+        // Warmup
+        for (int i = 0; i < WARMUP; i++) {
+            benchmarkRBV(size);
+            benchmarkArrayList(size);
+            benchmarkSux4j(size);
+        }
+
+        // Benchmark
+        long rbvTime = 0, alTime = 0, sux4jTime = 0;
+        for (int i = 0; i < ITERATIONS; i++) {
+            rbvTime += benchmarkRBV(size);
+            alTime += benchmarkArrayList(size);
+            sux4jTime += benchmarkSux4j(size);
+        }
+
+        // Space measurement
+        long rbvSpace = measureRBVSpace(size);
+        long alSpace = measureALSpace(size);
+
+        System.out.printf("%d\t%.2f\t%.2f\t%.2f\t%d\t%d%n",
+            size,
+            rbvTime / (double) ITERATIONS,
+            alTime / (double) ITERATIONS,
+            sux4jTime / (double) ITERATIONS,
+            rbvSpace, alSpace);
+    }
+
+    private static long benchmarkRBV(int size) {
+        ResizableBitVector rbv = new ResizableBitVector();
+        Random rand = new Random(42);
+        long start = System.nanoTime();
+        for (int i = 0; i < size; i++) {
+            rbv.append(rand.nextInt(2));
+        }
+        return (System.nanoTime() - start) / 1_000_000;
+    }
+
+    private static long benchmarkArrayList(int size) {
+        ArrayList<Integer> list = new ArrayList<>();
+        Random rand = new Random(42);
+        long start = System.nanoTime();
+        for (int i = 0; i < size; i++) {
+            list.add(rand.nextInt(2));
+        }
+        return (System.nanoTime() - start) / 1_000_000;
+    }
+
+    private static long benchmarkSux4j(int size) {
+        LongArrayBitVector bv =
+            LongArrayBitVector.getInstance();
+        Random rand = new Random(42);
+        long start = System.nanoTime();
+        for (int i = 0; i < size; i++) {
+            bv.add(rand.nextInt(2) == 1);
+        }
+        return (System.nanoTime() - start) / 1_000_000;
+    }
+}
+\end{lstlisting}
+
+\section{Predecessor Search Benchmark}
+\label{sec:pred-benchmark}
+
+\begin{lstlisting}[language=C++, caption={Predecessor search timing benchmark}, label={lst:pred-bench}]
+#include <chrono>
+#include <random>
+#include <iostream>
+#include <immintrin.h>
+
+// Number of queries for timing
+const int NUM_QUERIES = 1 << 27;
+
+// Benchmark function template
+template<typename Func>
+double benchmark(Func f, const uint16_t* S, int k) {
+    std::mt19937 gen(42);
+    std::uniform_int_distribution<uint16_t> dist(0, 65535);
+
+    auto start = std::chrono::high_resolution_clock::now();
+
+    volatile long sum = 0;  // Prevent optimisation
+    for (int i = 0; i < NUM_QUERIES; i++) {
+        uint16_t x = dist(gen);
+        sum += f(S, x);
+    }
+
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration =
+        std::chrono::duration_cast<std::chrono::microseconds>
+        (end - start);
+
+    return duration.count() / 1e6;  // Return seconds
+}
+
+int main(int argc, char* argv[]) {
+    int k = (argc > 1) ? atoi(argv[1]) : 16;
+
+    // Generate random sorted set
+    std::vector<uint16_t> S(k);
+    std::mt19937 gen(123);
+    std::uniform_int_distribution<uint16_t> dist(0, 65535);
+    for (int i = 0; i < k; i++) {
+        S[i] = dist(gen);
+    }
+    std::sort(S.begin(), S.end());
+
+    // Run benchmarks
+    std::cout << "k\ttLinear\ttBSI\ttAFK\ttFWM\ttSTL\n";
+    std::cout << k << "\t";
+
+    // Linear search
+    std::cout << benchmark(rankLinear<16>, S.data(), k);
+    std::cout << "\t";
+
+    // Bit-slice index
+    std::cout << benchmark(rankBSI<16>, S.data(), k);
+    std::cout << "\t";
+
+    // Ajtai with lookup tables
+    std::cout << benchmark(rankAFK<16>, S.data(), k);
+    std::cout << "\t";
+
+    // Improved Fredman with XOR-MinPos
+    std::cout << benchmark(rankFWImproved<16>, S.data(), k);
+    std::cout << "\t";
+
+    // STL lower_bound
+    std::cout << benchmark(rankSTL<16>, S.data(), k);
+    std::cout << "\n";
+
+    return 0;
+}
+\end{lstlisting}
+
+\section{Build and Run Instructions}
+\label{sec:build}
+
+\subsection{Chapter 4: Elias-Fano (Java/Maven)}
+
+\begin{lstlisting}[language=bash, caption={Building and running Chapter 4 experiments}]
+cd final_thesis_experiments-main/chp3/EliasFano
+
+# Compile
+mvn compile
+
+# Run benchmarks
+mvn exec:java -Dexec.mainClass=\
+  "com.chp3.efano.ExtensibleArrayBenchmark"
+
+# Run bitvector benchmarks
+mvn exec:java -Dexec.mainClass=\
+  "com.chp3.efano.BitvectorBenchmark"
+\end{lstlisting}
+
+\subsection{Chapter 5: Fast Predecessor Search (C++)}
+
+\begin{lstlisting}[language=bash, caption={Building and running Chapter 5 experiments}]
+cd final_thesis_experiments-main/chp4/FastInSmall
+
+# Compile with AVX2 optimisations
+g++ -std=c++11 -march=native -mssse3 -mavx2 \
+    -mbmi2 -O3 All.cpp -o Demo
+
+# Run for specific set size
+./Demo 16
+
+# Run full benchmark suite
+./run.sh
+\end{lstlisting}
+
+\section{Computing Environment}
+\label{sec:environment}
+
+All experiments were conducted on the following system:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Component} & \textbf{Specification} \\
+\hline
+CPU & Intel Core i5-4460 @ 3.40GHz \\
+Architecture & x86\_64 (64-bit) \\
+SIMD Support & SSE4.2, AVX, AVX2, BMI1, BMI2 \\
+RAM & 8 GB DDR3 \\
+L1 Cache & 32 KB (data), 32 KB (instruction) \\
+L2 Cache & 256 KB \\
+L3 Cache & 6 MB \\
+\hline
+OS & Ubuntu 22.04.3 LTS \\
+Kernel & Linux 5.15.0 \\
+Java & OpenJDK 11.0.20 \\
+C++ Compiler & g++ 11.4.0 \\
+Optimisation & -O3 -march=native \\
+\hline
+\end{tabular}
+\caption{Computing environment for experimental evaluation}
+\label{tab:environment}
+\end{table}
+
+\section{Data Availability}
+\label{sec:data}
+
+The complete source code and benchmark data are available at:
+
+\begin{itemize}
+    \item \textbf{Repository}: The implementation code is organised in the \texttt{final\_thesis\_experiments-main} directory.
+
+    \item \textbf{Benchmark Results}: Raw benchmark data in TSV format is stored in \texttt{result.tsv} files within each chapter's directory.
+
+    \item \textbf{Reproducibility}: All experiments can be reproduced by running the provided shell scripts (\texttt{run.sh}) after installing the required dependencies.
+\end{itemize}

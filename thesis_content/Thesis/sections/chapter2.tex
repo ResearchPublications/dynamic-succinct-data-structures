@@ -1,0 +1,297 @@
+\chapter{Background and Tools}
+This chapter introduces some key concepts and notation on design and querying of compressed data structures. Starting with the basic concepts, bit-vector which is a key building block of succinct data structures was introduced. Some examples showing how data can be represented using close to the information theoretic minimum was shown and then discussed some well-known techniques and algorithms for compressing integers.
+\section{Introduction}
+Consider a problem where recording the performances of students in a test is necessary. Whenever a student completes the test, their score is computed and stored in a file. For simplicity, it is assumed that only the score of the students is recorded as they are ready.
+\begin{center}
+    3, 50, 7, 28, \ldots, 10, 92, 43, \ldots 76, 43, 29.
+\end{center}
+Now that the results have been collected, it will be useful to be able to analyse the query performances. Suppose it is desired to determine how many students failed the test (where the pass mark is at least 40). It is clear that the entire list must be scanned to get an accurate answer. Given $n=1000000$ be the number of students that took the test, this means $1000000$ scans at best and worst case scenario. This is true for even larger number of students with $n$ number of scans needed to provide answer for such a simple problem.\par
+Pre-processing the data in some way can improve on the earlier solution. If the data is sorted in a particular order, such as ascending order of the scores, the earlier approach remains theoretically the same (same number of scans at worst case), but can perform better empirically (may not scan through always). 
+\begin{center}
+    3, 7, 10, 28, \ldots, 43, 50, 76 \ldots 87, 91, 98.
+\end{center}
+Even better, solving the problem using divide-and-conquer algorithms such as the infamous binary search makes it easier. Solving the problem becomes incredibly easier using binary search. Only the position of the first occurrence of $40$ needs to be found and the answer is obtained. This takes about $\log n = \log(1000000) \approx 20$ scans which is $\approx 50000$ times faster than the previous approach. This shows that some pre-processing (in this case, ordering the data) can greatly improve some solutions.\par
+Storing the dataset can also be considered. If the same number of bits is naively assigned to each score as a 32-bit or 64-bit integer which is equivalent to a \textit{machine word} (discussed in section \ref{memory-architecture}), this will need $n\log n$ bits to store the data. But better compression can be achieved by focusing on the frequencies of appearance of each score. This way, scores with higher frequencies will be assigned shorter codes, and those with lower frequencies of appearance can be assigned longer codes. It is clear that the number of bits needed to represent the dataset is $< n\log n$. More discussions on succinct storage is provided in section \ref{subsec:itlb} and section \ref{entropy}.
+\section{Basic Concepts}
+%Let $A$ represent an ordered set of integers ${a_0, a_1, \ldots, a_{n-1}}$ over an alphabet $\sum$ and let $|A|$ be the cardinality of $A$. Let $B(a)$ represent the binary representation of integer $a \in A$.
+In this section, the various models of computation used throughout the thesis are described. The concept of memory architecture and management, entropy, static and dynamic data structures is also introduced.
+\subsection{Model of Computation}
+A model of computation is a mathematical abstraction that describes how a computer algorithm or program operates. There are several different models of computation such as Turing machine, the lambda calculus, and the Random Access Machine (RAM). RAM model is the most common model of computation used in analysis of algorithms.
+\newline \newline
+The Turing machine introduced by Alan Turing is a theoretical machine that is often considered the most powerful model. It operates on a tape with symbols, reading, writing, and moving its head according to a set of rules. Despite its simplicity, it can theoretically simulate any other model of computation.\par
+Lambda Calculus focuses on functions and their application. Instead of manipulating symbols on a tape, it uses expressions to define functions and apply them to arguments. It's a powerful way to reason about logic and computation, forming the foundation of functional programming languages.\par
+The Random Access Machine (RAM) is a model of computation that is based on the concept of a random-access memory. The assumption of this model of computation is that a word of $w$ bits can be manipulated with a single instruction at constant time. Typically, $w$ could be 32 or 64 bits, but there are architectures that supports larger words of 128, 256 or 512 bits. Operations such as addition, subtraction, multiplication, division, $mod$ ceiling and floors, etc. are considered as single operations that can be done in $O(1)$ time. Likewise, logic operation such as bitwise $or$, $and$, $xor$, $not$ can be done in constant time. These assumptions do not differentiate access time to the instructions due to memory hierarchy as it is generally proven that access to data in lower memory hierarchy is slower than those in higher hierarchy \cite{Gog_2013}. But in practice, accessing memory on hardware is logarithmic in complexity due to virtual to physical address translation \cite{Jurkiewicz_2015}.\par
+Under the RAM model (on which the analysis in this thesis will be based), the number of words is used to compute the space usage as well as time complexity depending on the number of read/write operations of an algorithm. One needs to be careful not to make unrealistic assumptions on the RAM model, for example, a sort operation over a set can be considered as an word-level instruction that can sort a set in constant time \cite{Cormen_2022}.
+\subsection{Memory Architecture} \label{memory-architecture}
+To assist with understanding the problems associated with representing and processing data efficiently, the memory architecture of a computer system is described. The hierarchical structure of the computer memory provides balance between speed, capacity, and cost. It comprises multiple levels, each serving distinct roles in data storage and access with higher level of the hierarchy having less space but more speed and the lower level having more space and slower. Typically, data can be stored in the following types of memory \cite{Doran_1979}: 
+\begin{itemize}
+    \item Registers: At the top of the memory hierarchy are registers, which are small, fast storage locations within the CPU. Registers hold data that the CPU is currently processing. Their limited size and proximity to the CPU ensure minimal delay in data access, facilitating the execution of instructions at high speed.
+
+    \item Cache Memory: Cache memory acts as an intermediary between the CPU and the main memory (RAM). It is designed to temporarily store frequently accessed data and instructions, thereby reducing the average time required to access memory. The cache is divided into multiple levels:
+
+    \begin{itemize}
+        \item L1 Cache: Located within the CPU, this is the smallest and fastest cache.
+        \item L2 Cache: Slightly larger and slower, it is usually situated on the CPU chip.
+        \item L3 Cache: Even larger and slower, L3 cache is shared among multiple CPU cores in modern multi-core processors.
+    \end{itemize}
+    The cache leverages spatial and temporal locality to predict and store data that is likely to be used soon, significantly speeding up data retrieval processes.
+
+    \item Main Memory (RAM)
+    RAM, or Random-Access Memory, is the primary working memory in a computer. It stores data and instructions that the CPU needs while performing tasks. RAM is much faster than disk storage but slower and more expensive per byte than cache memory. It connects to the CPU via a memory bus, which facilitates the transfer of data. Despite its speed, RAM is volatile, meaning it loses all stored data when the computer is turned off.
+
+    \item Secondary Storage: Secondary storage, such as hard disks and solid-state drives (SSDs), provides non-volatile, long-term data storage. This level of memory is much larger and cheaper per byte than RAM, but significantly slower. Data in secondary storage must be loaded into RAM before the CPU can access it. SSDs, while faster than traditional hard disks, still do not match the speed of RAM or cache.
+    \item Tertiary and Off-line Storage: At the lowest levels of the hierarchy are tertiary and off-line storage solutions, including optical disks, magnetic tapes, and cloud storage. These provide large-scale, cost-effective storage for data that is infrequently accessed. While they offer high capacity, their access speeds are much slower, making them suitable for backup and archival purposes rather than regular data retrieval.
+\end{itemize}
+In summary, programs that efficiently utilise fast memory execute much quicker. Specifically, succinct data structures aims to fit more data into the faster cache or RAM, hence minimising the need for time-consuming data transfers from slower secondary storage. This leads to quicker data access and improved overall performance.
+
+\subsection{Information Theoretic Lower Bound (ITLB)}
+\label{subsec:itlb}
+When dealing with a combinatorial objects, it is quite important to understand the number of bits needed to optimally represent each object. If an object drawn from a set $S$ is to be represented, the minimum amount of bits needed to uniquely represent and identify the object is $\lceil \log|S| \rceil$ bits in the worst case where each object is given codes of same length.. This is referred to as the \textit{information theoretic lower-bound}. Any attempt to use fewer bits to represent the object other than its information theoretic lower bound may not support unique decodability of elements of $S$. This means more than one object from $S$ may be represented in the same way. However, if more is known about the characteristics of the elements in $S$, it may be possible to use less than the ITLB.\par
+For example, if $S$ is a set of bit-vectors all having length $n$. This means that $|S| = 2^n$ which represents all the bit-vectors of length $n$, and $\lceil \log {2^n} \rceil = n$ which matches the ITLB. However, if the assumption is that $S$ contains all bit-vectors with $m$ of their bits set to $1$ or $0$, then $|S|=\binom{n}{m}$. The ITLB now is $\lceil \log \binom{n}{n} \rceil \approx n \log \frac{n}{m} + O(n) bits$ by using Newton's coefficient formula and Stirling's factorial approximation \cite{Shannon_1948}. Different data structures and their information-theoretic lower bounds are shown below.\par
+\textbf{Bit-vector}: when representing a bit-vector of length $n$, it has been shown that $|S| = \log 2^n$ possible bit-strings in $S$ with the length of $n$. For example, there are $2^3$ possible bit-strings of length $3$, and they are\newline
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|}\hline
+        000&001&010&011&100&101&110&111\\ \hline
+    \end{tabular}
+    \caption{All possible bit-strings of length $3$}
+    \label{tab:bit-strings-length3}
+\end{table}
+
+\textit{Proposition 1:} The Information theoretic lower bound to represent a bit string of length $n$ is $\lceil \log 2^n \rceil = n$ bits.\par
+\textit{Remark:} At worst case, writing out a bit-string as it is represents the ITLB.\newline
+
+\textbf{Binary trees:} A binary tree is rooted tree with each node having a maximum of $2$ children; left and right child or none. There are $C_n = \frac{1}{n+1} \binom{2n}{n}$ possible variations of binary trees where $n$ is the number of nodes. For $n = 3$, this gives $C_3 = \frac{1}{3+1} \frac{6!}{3!.3!} = 5$\par
+\textit{Proposition 2:} The information theoretic lower bound to represent a binary tree with $n$ nodes is $2n - O(\log n)$\par
+
+% \begin{figure}[H]
+% \begin{minipage}[t]{0.3\textwidth}
+% \centering
+% \begin{forest}
+% for tree={circle, draw, l sep+=10pt, s sep+=10pt, inner sep=1.5pt}
+% [1 [2 [3]]]
+% \end{forest}
+% \end{minipage}%
+% \hspace{0.05\textwidth}%
+% \begin{minipage}[t]{0.3\textwidth}
+% \centering
+% \begin{forest}
+% for tree={circle, draw, l sep+=10pt, s sep+=10pt, inner sep=1.5pt}
+% [1 [2] [3]]
+% \end{forest}
+% \end{minipage}%
+% \hspace{0.05\textwidth}%
+% \begin{minipage}[t]{0.3\textwidth}
+% \centering
+% \begin{forest}
+% for tree={circle, draw, l sep+=10pt, s sep+=10pt, inner sep=1.5pt}
+% [1 [3 [2]]]
+% \end{forest}
+% \end{minipage}
+
+% \vspace{1cm} % Adjust vertical space between rows
+
+% \begin{minipage}[t]{0.3\textwidth}
+% \centering
+% \begin{forest}
+% for tree={circle, draw, l sep+=10pt, s sep+=10pt, inner sep=1.5pt}
+% [2 [1] [3]]
+% \end{forest}
+% \end{minipage}%
+% \hspace{0.05\textwidth}%
+% \begin{minipage}[t]{0.3\textwidth}
+% \centering
+% \begin{forest}
+% for tree={circle, draw, l sep+=10pt, s sep+=10pt, inner sep=1.5pt}
+% [3 [1] [2]]
+% \end{forest}
+% \end{minipage}
+% \caption{Possible variations of binary tree with $n = 3$}
+% \end{figure}
+
+\textbf{Prefix sum:} Given a set containing sequences of $n$ increasing positive integers that sums up to $m$ with the assumption that $m$ and $n$ are known in advance, it can be shown that the variations of these sequences are $|S| = \binom{m-1}{n-1}$. Using an example, if $n = 3$ and $m = 5$, this gives $\binom{7!}{2!.3!} = 6$ \par
+\textit{Proposition 2:} The information theoretic lower bound to represent prefix sum is $\lceil \log |S| \rceil \leq n\log (\frac{m}{n}) + n\log e$ bits. \newline
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|}\hline
+        [1,2,5]&[1,3,5]&[1,4,5]&[2,3,5]&[2,4,5]&[3,4,5]\\ \hline
+    \end{tabular}
+    \caption{All possible sequences of length $3$ that adds up to $5$}
+    \label{tab:sequences-sum5}
+\end{table}
+
+\subsection{Empirical Entropy}
+\label{entropy}
+The concept of Information theoretic lower bound was introduced that provides the least number of bits needed to represent an item from a sequence in the worst case scenario. This means that no prior knowledge on the data to be stored is available, hence the analysis is performed at worst-case. But if some information about the data to be stored is available, it is easier to explore and exploit some properties of the data such that less than the Information theoretic lower bound can be used while still maintaining unique decodability.\par
+Entropy is the lower bound of the number of bits needed to uniquely represent an object in a set. Given the problem of encoding an a set of elements $A$ over the alphabet $\sum = \{a_1, a_2, \ldots a_n\}$ with the occurrence of any $a_i \in A$ represented as $|a_i|$. The probability of $a_i$ in $A$ is given by $p(i) = |a_i| / |A|$. The $0th$ order empirical entropy of $A$ is $H_o(A) = \sum p(i) \log 1/p(i)$. This is called the $zero-order$ or $memory-less$ entropy because the object $a_i$ emitted by the source is independent of all previously emitted objects $a_{i-1}, a_{i0-2}, \ldots a_0$. An example is given here with a bit-string of size $n$. If the bit-string has $50\%$ of $1s$, then the $H_0 = 0.5\log 0.5 + 0.5\log 0.5 = 1$. Here, exactly $n$ bits are needed to represent the object. In another example with the bit-string having $70\%$ of $1s$, then $H_0 = 0.7\log 0.7 + 0.3\log0.3 = 0.8816$ bits. It can now be seen that by simply knowing the frequencies of the alphabets, lower than the ITLB can be used to represent the bit string using $0.8816n$ bits only.\par
+It gets more interesting if the source emitting these symbols has some $memory$, where the probability of a symbol to be emitted depends on the appearance of that symbol in the set. This is called the $higher-order$ entropy or $k^{th}-order$ entropy  \cite{Navarro_2016}. The probability of $a_i$ given than $a_0 \ldots a_{n-1}$ has been emitted is given by $p(a_i) = p(a_i|a_0 \ldots a_{n-1})$. Hence, the $k^{th}-order$ entropy $H[a_0 \ldots a_{n-1}] = \sum p(a_0 \ldots a_{n-1}) H[a_0 \ldots a_{n-1}]$.
+
+\subsection{Bit-Vectors}
+\label{bit-vectors}
+Bit-vectors are very important building blocks of succinct data structures representing sets, strings, and sequences. A bit-vector is often referred to as bitmap or bit-array in various literature. Henceforth, a bit-vector is assumed to be a sequence of bits that supports $access$, $rank$ and $select$ operations. \par
+\textbf{Definition:} Bit vector is a sequence  $B[0, n-1] \in {0,1}^n$ of length $n$ that supports the following operations:
+\begin{itemize}
+    \item $access(B, i):$ returns the bit $B[i]$ for $0 \leq i \leq n-1$.
+    \item $rank_1(B, i):$ returns the number of occurrence of $1s$ in $B[0, i)$. This can be written as $\sum_{j=0}^{n-1} B[j]$  for $0 \leq i \leq n-1$.
+    \item $rank_0(B, i):$ returns $i - rank_1(i)$  for $0 \leq i \leq n-1$.
+    \item $select_1(B, i):$ returns the position of the $i^{th}$ occurrence of $1$ in $B$. This can be written as $max\{j | rank_1(i) = i\}$. 
+    \item $select_0(B, i):$ returns the position of the $i^{th}$ occurrence of $0$ in $B$. This can be written as $max\{j | rank_0(j) = i\}$. 
+\end{itemize}
+
+\subsubsection{Naive Approach}
+By storing the bit-vector in plain format as sequence of $n$ bits, $access$ operation can be supported in $constant$ time. Using an additional look-up table $T_r$ such that $T_r[i]$ stores the number of $1s$ till $i$ allows $rank$ operations to be supported in constant time. But $T_r$ takes additional $n\log n$ space. To support $select$ in constant time, look-up tables $T_{s0}$ and $T_{s1}$ are also used, which store the positions of all $1s$ and $0s$ respectively. Clearly, this approach is time efficient as it supports all operations in constant time, but it is not \textit{space-efficient} as it needs $n + O(n\log n)$ bits of space to achieve this.\par
+\textit{\textbf{Example}}
+\begin{itemize}
+    \item \textit{bit-vector}: $1011001110001001$
+    \item $n = 16$
+    \item $T_r$: the look-up table to support $rank_1$ operation
+        \begin{table}[h]
+            \centering
+            \begin{tabular}{|*{16}{>{\centering\arraybackslash}p{0.6cm}|}}
+            \hline
+                 1 & 1 & 2 & 3 & 3 & 3 & 4 & 5 & 6 & 6 & 6 & 6 & 7 & 7 & 7 & 8 \\ \hline
+            \end{tabular}
+            \begin{tabular}{*{16}{>{\centering\arraybackslash}p{0.6cm}}}
+                 \footnotesize{1} & \footnotesize{2} & \footnotesize{3} & \footnotesize{4} & \footnotesize{5} & \footnotesize{6} & \footnotesize{7} & \footnotesize{8} & \footnotesize{9} & \footnotesize{10} & \footnotesize{11} & \footnotesize{12} & \footnotesize{13} & \footnotesize{14} & \footnotesize{15} & \footnotesize{16} \\
+            \end{tabular}
+        \end{table}
+    \item $T_{s1}$: the look-up table to support $select_1$ operation
+        \begin{table}[h]
+            \centering
+            \begin{tabular}{|*{8}{>{\centering\arraybackslash}p{0.6cm}|}}
+            \hline
+                 1 & 3 & 4 & 7 & 8 & 9 & 13 & 16 \\ \hline
+            \end{tabular}
+            \begin{tabular}{*{8}{>{\centering\arraybackslash}p{0.6cm}}}
+                 \footnotesize{1} & \footnotesize{2} & \footnotesize{3} & \footnotesize{4} & \footnotesize{5} & \footnotesize{6} & \footnotesize{7} & \footnotesize{8} \\
+            \end{tabular}
+        \end{table}
+
+    \item $T_{s0}$: the look-up table to support $select_0$ operation
+        \begin{table}[h]
+            \centering
+            \begin{tabular}{|*{8}{>{\centering\arraybackslash}p{0.6cm}|}}
+            \hline
+                 2 & 5 & 6 & 10 & 11 & 12 & 14 & 15 \\ \hline
+            \end{tabular}
+            \begin{tabular}{*{8}{>{\centering\arraybackslash}p{0.6cm}}}
+                 \footnotesize{1} & \footnotesize{2} & \footnotesize{3} & \footnotesize{4} & \footnotesize{5} & \footnotesize{6} & \footnotesize{7} & \footnotesize{8} \\
+            \end{tabular}
+        \end{table}
+\end{itemize}
+\par
+To get $rank_1(6)$, $T_r[6]$ is simply looked up, which returns $3$. That means there are $3$ set bits from the beginning of the bit-string to position $6$. For $rank_0(6)$, the calculation is simply $i - rank_1(6) = 3$. To calculate $select_1(6)$, $T_{s0}[6] = 9$ is looked up. This means the $6^{th}$ set bit is at position $9$ in the bit-string. For $select_0(6)$, $T_{s0}[6] = 12$ is looked up.
+\par
+An improvement on the above can be made by not storing all the $rank_1[i]$ in $T_r$, but after every $\log^2 n$ positions. This means $T_r$ occupies $n/\log n$ space. To support $rank_1$, only one entry in $T_r$ needs to be read, accessing at most $O(\log n)$ bits. $select$ is also supported by doing \textit{binary-search} over the values of \textit{rank}. This takes $n + O(n/\log n)$ space and the operations take $O(\log n)$ time which is better than the naive approach, but not $optimal$.
+\newline\newline
+\textbf{Succinct Solution}\par
+The bit-vector is divided into \textit{sub-blocks} of $\log n$ bits and \textit{super-blocks} of $\log^2 n$ bits. For each \textit{super-block}, the number of set-bits of all \textit{sub-blocks} to the \textit{super-block} is stored. As each \textit{super-block} is $\log n$ in size, this requires $O(\log n . n/\log^2 n) = o(n)$ bits. For each \textit{sub-block}, the partial \textit{rank} that resets at the beginning of each \textit{super-block} is stored. This requires only $\log \log^2 n/\log n = o(n)$ bits \cite{Navarro_2012}. \par
+\textit{\textbf{Example}}
+\begin{itemize}
+    \item \textit{bit-vector}: $10110011100010011011101010001011$
+    \item $n = 32$
+    \item \textit{super-block} size: $\log n = 5$
+    \item \textit{sub-block} size: $\log^2 n = 25$
+\end{itemize}
+For the purpose of this example, the memory word is assumed to be $w = \log n = 5$. 
+
+\textit{bit-vector}\quad\quad\quad 10110\quad 01110\quad 00100\quad 10001\quad 11000\quad 00010\quad 11\newline
+\textit{super-blocks}\quad\quad 0\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad \quad \quad \quad \quad \quad \quad \quad11\newline
+\textit{blocks}\hspace{1.79cm}0\quad\quad\quad3\quad\quad\quad6\quad\quad\quad7\quad\quad\quad9\quad\quad\quad0\quad\quad\quad1
+\par
+To answer $rank_1(i)$, the $rank$ values in the \textit{super-block} and \textit{sub-block} containing $i$ are summed. As these store the $global$ and $local$ $rank$ respectively, only the exact number of bits set inside the $local$ block up to position $i$ needs to be determined. This can be done in constant time using $mask$ and $popcount$ on $\log n$ bits (single \textit{sub-block}) or at most $2\log n$ bits (intersecting \textit{sub-blocks}). Other implementations of of \textit{rank} and \textit{select} can be found in \cite{Arroyuelo_2016,Delpratt_2009, DBLP:journals/corr/PatrascuT14,  Pibiri_2017, Prezza17}
+\section{Space-Efficient Data Structures}
+Space-efficient structures are designed to minimise storage requirements while allowing queries to remain fast. The main challenge for these data structures is to balance between keeping query time as low as traditional data structures, but using space close to \textit{Information-theoretic lower bound}. While most solutions for these data structures are build to be \textit{static}, a lot of research is being done on making them \textit{dynamic} to support update queries.\per
+
+Succinct data structures were first discussed in Jacobson's Doctoral thesis  as a special class of compressed data structures \cite{Jacobson_1989}. While compressed data structures may need $O(n)$ additional bits to store an object that requires at least $n$ bits to represent, succinct data structures will only need $o(m)$ additional bits. Unlike traditional data structures that may use standard space storage, compact structures aim to approach the information-theoretic lower bound (ITLB) of space required to store data, otherwise called the \textit{succinct bound}. Trees and text data can be stored compactly using special encoding and application-specific designs. Using a sequence $A$ on $n$ elements as an example, a compact data structure will use $n + O(n)$. On the other hand, succinct data structures are highly-space efficient with the aim of fitting more data into memory to achieve very fast queries (typically constant time). The space usage is typically $n + o(n)$. Theoretically, these bounds are promising as they can be considered negligible under the asymptotic analysis. However, this may not always be the case in practice and theory may not always translate to practice \cite{Gonzalez_2005, Gog_2013}.
+
+\section{Fixed and Variable-Length Codes}
+Variable-length codes and \textit{fixed-length} codes are two fundamental approaches to encoding data, particularly integers. Fixed-length codes assign a uniform number of bits to each possible symbol in the set, ensuring simplicity and ease of decoding. However, this often results in inefficiency when encoding symbols with varying probabilities of occurrence. In contrast, variable-length codes assign shorter bit sequences to more frequently occurring symbols and longer bit sequences to less frequent ones \cite{Navarro_2016}. This adaptive allocation optimises the overall bit usage, reducing average code length compared to fixed-length codes, especially when dealing with data with varying entropy. An example is shown below
+\begin{itemize}
+    \item \textit{Sequence $A$}:\hspace{1.68cm} a\quad b\quad c \quad d
+    \item \textit{fixed-length codes}: \hspace{0.5cm} a: 000\quad b:001\quad c:010 \quad d: 011  
+\end{itemize}
+Assuming the objects in $A$ have varying frequencies, then variable-length codes may be used to improve on the encoding.
+\begin{itemize}
+    \item \textit{Sequence $A$}:\hspace{1.68cm} a (60\%)\quad b (30\%)\quad c (3\%) \quad d 2\%)
+    \item \textit{variable-length codes}: \hspace{0.5cm} a: 0\quad b:1\quad c:010 \quad d: 011  
+\end{itemize}
+\section{Integer Compressors}
+\label{int-compressors}
+Integer compressors are designed to compress sequences of integers in a way that minimises storage space while allowing efficient access, retrieval, and sometimes modification of the compressed data. As most of the data structures designed in this thesis are built on integer compression, an overview of some of the integer list compression algorithms is given. The main aim is to ensure that the shortest uniquely-decodable, variable-length codes are assigned to each integer so that the sequence is encoded with minimal number of bits.
+\subsection{Unary and Binary Codes}
+Unary codes represents $a$ using a sequence of \textit{'0's} followed by a single \textit{'1'}. The number of \textit{'0's} indicates the value being encoded. For example, the unary encoding of the number $3$ is $0001$. Unary encoding is simple and intuitive but becomes inefficient for larger numbers due to its linear growth in length with the encoded value.\per
+$$u(x) = 0^{x-1}1$$
+One can also use the reversed unary with $u(x) = 1^{x-1}0$ and encode $3$ as $1110$. Binary codes $B(x)$ represents numbers using the \textit{base-2} numeral system, where each digit (bit) in the sequence represents a power of $2$. In binary encoding, numbers are expressed using only \textit{'0's} and \textit{'1's}. This method is highly efficient for computers because it directly corresponds to the hardware's binary logic. For example, $B(3)$ will be $11$.
+\subsection{Elias-Gamma ($\gamma$) Codes}
+This method encodes in unary the length of the binary representation of |x| and then encodes $x$ in binary without its highest bit. Hence, $\gamma(x) = u(|x|) [x]_{|x|-1}$ where $[x]_l$ is the least significant bit of $x$. It can be shown that $|\gamma(x)| = 2|x| - 1 = O(\log x)$ \cite{Elias_1975}. Assuming the numbers to be encoded fit into a computer word, $\gamma$ codes for small integers can easily be decoded in $O(1)$ by either using a small \textit{look-up} table or using machine instructions to find the \textit{highest-bit} of $x$. For example, $\gamma(39) =  11111000111$ where $B(39) = 100111$ with length of $6$ bits, then the $U(6) = 1111110$. Concatenating the \textit{unary} and stripping off the leading $1$ from the $binary$, the result is $11111000111$
+\subsection{Elias-Delta ($\delta$) Codes}
+While \textit{Elias-$\gamma$} codes are efficient for smaller numbers, they can be inefficient for larger integers due to the unary prefix. Elias-Delta coding improves on this by replacing the unary prefix with a \textit{gamma code} of the length of the binary representation. For instance, \(\delta(113) = 001111110001\), where the last part 1110001 is the binary representation of 113, prefixed by \(\gamma(7) = 00111\). The decoding of delta codes follows naturally from the decoding of gamma codes.
+
+\subsection{VByte Codes }
+This method works really well for large numbers. The aim is to speed up decoding by reading fixed-aligned data chunks. Here, integers are represented using a multiple of a fixed number of bits, this can be \textit{a nibble, byte, or even word}. Variable-byte \cite{Thiel_1972} splits each integer into groups of \textit{7 bits}. Each group is stored in one byte. The most significant bit (MSB) of each byte is used as a continuation bit, indicating whether the byte is the final byte of the current integer (continuation bit = 0) or if there are more bytes to come (continuation bit = 1). This method ensures that smaller integers use fewer bytes, though not very suitable for integers that needs less than a byte. For example, $VB(913) = 1110010\underline{1}00000001$ with the $8^th$ bit (control bit) set to $1$ showing that the next byte needs to be read to decode the integer. The $2^{nd}$ byte also had to be padded with zeros to make it a whole byte.
+
+\subsection{Golomb-Rice Codes}
+In the early 1970s, Robert \cite{Rice_1971} introduced Rice coding, a parameterised compression scheme for integers that is particularly effective when the values are clustered around a common value. Rice coding is a special case of Golomb coding and is defined by a parameter \( k \). The Rice code \( R_k(x) \) is composed of two parts: the quotient \( q = \lfloor (x-1)/2^k \rfloor \) and the remainder \( r = x - q \cdot 2^k - 1 \). The quotient is encoded in unary, and the remainder is encoded in binary using \( k \) bits. For example, with \( k = 5 \), \( R_5(113) = 000110000 \), where the quotient 3 is encoded as 0001 and the remainder 16 as 00000. Using \( k = 6 \), the code becomes \( R_6(113) = 01110000 \), which is more efficient because \( 2^6 \) is closer to 113 than \( 2^5 \). Decoding involves counting the leading zeros to determine the quotient, then calculating the value by multiplying the quotient by \( 2^k \) and adding the remainder.
+
+\subsection{Packed Encoding}
+Packed encoding methods improve compression ratio and decoding speed by encoding blocks of integers instead of individual values. Binary packing, for instance, represents a block of integers using the minimum number of bits necessary for the largest integer in the block. Simple strategies like Simple-9 and Simple-16 pack integers into 32 or 64-bit words using a few selector bits to indicate how many integers and their bit sizes are packed. Simple-9 uses 4 selector bits and 28 data bits, allowing configurations like 28 1-bit integers or 14 2-bit integers. Simple-8b uses 64-bit words with 4-bit selectors. The QMX method improves on this by packing integers into 128-bit words and storing selectors separately, compressing them with run-length encoding (RLE) for efficiency \cite{Navarro_2016}.
+
+% \subsection{PForDelta}
+% PForDelta (PFOR) addresses the inefficiencies of block-based strategies when dealing with blocks containing at least one large value. It achieves this by choosing a base value \( b \) and a universe of representation \( k \) such that most integers in a block can be encoded within \( k \) bits. Exceptions are handled separately with another compressor. For example, given the sequence \([3, 4, 7, 21, 9, 12, 5, 16, 6, 2, 34]\), using \( b = 2 \) and \( k = 4 \), the main sequence would be encoded as \([1, 2, 5, *, 7, 10, 3, *, 4, 0, *]\) with exceptions \([21, 16, 34]\). Opt-PFOR optimises this process by selecting \( b \) and \( k \) to minimise space occupancy.
+
+% \subsection{Directly Addressable Codes}
+% Directly Addressable Codes (DACs) are designed to provide efficient random access to compressed lists of integers. The idea behind DACs is to partition the integers into different levels, where each level is encoded separately. The first level contains the least significant bits of the integers, while subsequent levels contain the more significant bits. This hierarchical structure allows for direct access to any integer without decompressing the entire list.\par
+
+\subsection{Elias-Fano Encoding}
+Elias-Fano encoding, proposed independently by Elias\cite{Elias_1974} and Fano\cite{Fano_1971} in the 1970s, is effective for compressing sorted integer sequences. Each integer in the sequence is split into low bits and high bits. The low bits are stored explicitly, while the high bits are encoded in a bitvector using unary coding. For example, given a sequence \( S(n, u) \), each integer \( S[i] \) is divided into low bits \(\ell_i\) and high bits \( h_i \), with the high bits stored in a bitvector such that the \( i \)-th position is set to 1 at \( h_i + i \). This method efficiently represents both the high and low parts of the integers, balancing compression and decoding speed. More discussion on Elias Fano encoding is given in Section \ref{elias-fano}.
+\section{Inverted Index Compression}
+Search engines like databases, store documents in their repository. An index is maintained to allow for faster queries and retrievals. Consider an example with the following web pages (henceforth referred to as documents) containing some terms/words :
+\begin{table}[H]
+    \begin{itemize}
+        \item \textit{Doc1} $\rightarrow$  (book, car, house, money)
+        \item \textit{Doc2} $\rightarrow$  (cat, money)
+        \item \textit{Doc3} $\rightarrow$  (car, cat)
+        \item \textit{Doc4} $\rightarrow$  (book)
+        \item \textit{Doc5} $\rightarrow$  (money, house)
+    \end{itemize}
+    \caption{Documents with their set of terms}
+    \label{tab:documents-terms}
+\end{table}
+This is very similar to the index at the beginning of books or even this thesis, showing for each page, what terms (topics or sub-topics in this case) can be found in them. In large web systems, query operations across web documents comes with obstacles. The term(s) being queried could occur in very large number of documents with each document having number of terms. The index needs to be optimised in a way that relevant documents to the search terms can be retrieved and returned quickly. Using an inverted index, terms are mapped to their occurrences in a collection of documents, typically represented as a list of document identifiers called \textit{posting list}. However, due to their potentially large size, especially in extensive document collections (like the world-wide-web), it is essential to employ compression techniques to reduce storage requirements and enhance query performance \cite{Buettcher_2010, Manning_2008}. An inverted index of Table \ref{tab:documents-terms} is shown below:\par
+\begin{table}[H]
+    \begin{itemize}
+        \item $\textit{book} \rightarrow (1, 4)$
+        \item $\textit{car} \rightarrow (1, 3)$
+        \item $\textit{house} \rightarrow (1, 5)$
+        \item $\textit{money} \rightarrow (1, 2, 5)$
+        \item $\textit{cat} \rightarrow (1, 3)$
+    \end{itemize}
+    \caption{Inverted list of terms with the occurrences as document id}
+    \label{tab:inverted-index}
+\end{table}
+Inverted index data structure are very useful in supporting full-text search engines by mapping each term to a list of documents in which it appears to perform rapid searches, retrieve relevant documents, and rank them efficiently based on various algorithms \cite{Pibiri_2017}. Likewise in Information Retrieval (IR) systems, inverted indexes are used to quickly locate documents that contain specific words or phrases, making them indispensable for digital libraries, academic databases, and other large text repositories \cite{Manning_2008}. Moreover, Version Control systems like Git use inverted indexes to manage and retrieve different versions of source code efficiently. By indexing changes and differences between versions, these systems can quickly show the history of changes, compare different versions, and merge updates from multiple contributors.\par
+Given their usefulness and the large amount of data they hold, it is important that they benefit from compressed or even better, succinct data structures. This would mean more data can be loaded in memory for faster processing. Some of these algorithms have been discussed in Section \ref{int-compressors}. Further reading on inverted index compression can be found in \cite{ Anh_2002, Anh_2005, Pibiri_2017, Zobel_2006}
+
+\section{Chapter Summary}
+
+This chapter presented the foundational concepts and tools necessary for understanding succinct data structures. The key topics covered include:
+
+\begin{itemize}
+    \item \textbf{Models of Computation}: The Random Access Machine (RAM) model was introduced as the computational framework used throughout this thesis, where word-level operations are assumed to execute in constant time.
+
+    \item \textbf{Memory Architecture}: The hierarchical structure of computer memory (registers, cache, RAM, secondary storage) was described, highlighting the importance of fitting data into faster memory levels for improved performance.
+
+    \item \textbf{Information Theoretic Lower Bound (ITLB)}: The minimum number of bits required to uniquely represent objects from a set was defined, providing the theoretical baseline against which space efficiency is measured.
+
+    \item \textbf{Empirical Entropy}: Zero-order and higher-order entropy were introduced as measures of the minimum bits needed when frequency information about the data is known.
+
+    \item \textbf{Bit-vectors}: The fundamental building block for succinct data structures was presented, including the rank and select operations that enable efficient queries.
+
+    \item \textbf{Integer Compression}: Various encoding schemes (unary, binary, Elias-gamma, Elias-delta, VByte, Rice, and Elias-Fano) were reviewed, providing the compression techniques used in subsequent chapters.
+
+    \item \textbf{Inverted Index Compression}: The application of integer compression to search engine indexing was discussed, demonstrating the practical relevance of the techniques presented.
+\end{itemize}
+
+These concepts form the theoretical foundation for the data structures developed in subsequent chapters, particularly the extensible array representation (Chapter~\ref{chap:extensible}), predecessor search (Chapter~\ref{chap:predecessor}), and dynamic prefix sum (Chapter~\ref{chap:prefixsum}).

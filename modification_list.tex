@@ -1,0 +1,205 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+% Column type for wrapping text
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+% Status commands
+\newcommand{\addressed}{\textbf{Addressed}}
+\newcommand{\partaddressed}{\textbf{Partially Addressed}}
+\newcommand{\needsattention}{\textbf{Needs Attention}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Modification List}}\\[0.5cm]
+    {\Large Response to Examiner Corrections}\\[1cm]
+    \begin{tabular}{@{}ll@{}}
+        \textbf{Candidate:}       & Abdulhakeem Ibrahim \\[4pt]
+        \textbf{Thesis Title:}    & Engineering Dynamic Succinct Data Structures \\[4pt]
+        \textbf{Degree:}          & Doctor of Philosophy \\[4pt]
+        \textbf{Examiner Report Date:} & 3 October 2025 \\[4pt]
+        \textbf{Resubmission Date:}    & January 2026 \\
+    \end{tabular}
+\end{center}
+
+\vspace{1cm}
+
+\section*{Introduction}
+
+This document details the modifications made to the thesis in response to the examiners' report dated 3 October 2025. Each of the 23 examiner comments is listed alongside the specific action taken, with references to the relevant sections of the revised thesis. The thesis has been substantially restructured from 5 chapters to 7 chapters, with a new methodology chapter (Chapter~3) and a dedicated conclusion chapter (Chapter~7) added to address the examiners' recommendations.
+
+\vspace{0.5cm}
+
+\section*{Modification Table}
+
+\begin{longtable}{@{}c L{4.8cm} L{7.2cm} L{2.2cm}@{}}
+\toprule
+\textbf{\#} & \textbf{Examiner Comment} & \textbf{Action Taken} & \textbf{Status} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{\#} & \textbf{Examiner Comment} & \textbf{Action Taken} & \textbf{Status} \\
+\midrule
+\endhead
+
+\midrule
+\multicolumn{4}{r}{\textit{Continued on next page\ldots}} \\
+\endfoot
+
+\bottomrule
+\endlastfoot
+
+1 &
+Reorganise chapters to demonstrate systematic research. &
+Thesis restructured into 7 chapters. New Chapter~3 (Research Methodology and Theoretical Framework) added. Clear progression established: Background $\rightarrow$ Methodology $\rightarrow$ three contribution chapters $\rightarrow$ Conclusion. &
+\addressed \\
+\midrule
+
+2 &
+Explain research method and validation method in detail. &
+Ch.~3 Sec.~1: Algorithm Engineering paradigm (5-step cycle). Ch.~3 Sec.~4: Verification Framework (invariant-based, Hoare triples, test oracle). Ch.~3 Sec.~6: Experimental Methodology. &
+\addressed \\
+\midrule
+
+3 &
+Define research question quantitatively, including computing environment. &
+Ch.~1 Sec.~3: Three research questions stated. Ch.~3 Sec.~2: Quantified with mathematical formulas (e.g., $S(D) \leq c \cdot \text{ITLB}$). Ch.~3 Sec.~5: Full computing environment (Intel i5-4460, 8GB DDR3, Ubuntu 22.04, compilers, SIMD capabilities). &
+\addressed \\
+\midrule
+
+4 &
+Clarify why solving this helps real applications (big data/cloud). &
+Ch.~1 Motivation: Big data volume (175~ZB by 2025). Ch.~4 Sec.~5: Applications (inverted index compression, streaming data, event sourcing). Ch.~5: B-tree node search, database indices. &
+\addressed \\
+\midrule
+
+5 &
+State quantified success criteria. &
+Ch.~3 Sec.~3: Table with 5 quantified criteria---space efficiency (constant factor of ITLB), query latency (faster than binary search), update latency (amortised $O(1)$), correctness (100\% pass rate), reproducibility ($<$5\% variance). &
+\addressed \\
+\midrule
+
+6 &
+State LOC count and include sample code in appendices. &
+Appendix~B: Project statistics table---3,641 total LOC with per-chapter breakdown. Appendix~A: 4 code samples (ResizableBitVector.java, Improved Fredman C++, Ajtai C++, DynamicPrefixSum C++). &
+\addressed \\
+\midrule
+
+7 &
+Include user interface of prototype. &
+Explained in thesis that these are library-level data structure implementations (not GUI applications). CLI usage and API examples provided in appendices. &
+\addressed \\
+\midrule
+
+8 &
+State source of data and include sample data in appendix. &
+Ch.~3 Sec.~6: Dataset generation described (synthetic monotone sequences from cumulative sums with uniform/exponential/Zipfian gap distributions). Appendix~B: Benchmark code showing data generation. &
+\addressed \\
+\midrule
+
+9 &
+State and justify contributions in the body of computing knowledge. &
+Ch.~7: Contributions justified through Summary of Contributions (Sec.~1), Reflective Analysis (Sec.~2), and Future Research Directions (Sec.~4). &
+\addressed \\
+\midrule
+
+10 &
+Conclude properly with contributions, future directions, reflective analysis. &
+Ch.~7: Summary of Contributions (Sec.~1), Reflective Analysis (Sec.~2), Limitations (Sec.~3), Future Research Directions in 3 tiers: short/medium/long-term (Sec.~4), Concluding Remarks (Sec.~5). &
+\addressed \\
+\midrule
+
+11 &
+Add missing info in Reference (not Bibliography) section---publisher, city, country. &
+Bibliography entries updated with publisher, city, and country information. &
+\addressed \\
+\midrule
+
+12 &
+Improve presentation---e.g., lowercase first letter in section titles. &
+Section titles now use proper title-case capitalisation throughout all chapters. &
+\addressed \\
+\midrule
+
+13 &
+Use passive voice instead of ``we'' and ``our''. &
+All authorial uses of ``we'' and ``our'' converted to passive voice across all chapters. Mathematical/pedagogical uses (standard convention) retained. Files edited: abstract, Ch.~2, Ch.~4, Ch.~5, Ch.~6. &
+\addressed \\
+\midrule
+
+14 &
+Use benchmarks for comparison with proposed approaches. &
+Ch.~4: Append performance, space efficiency, and random access benchmarks vs ArrayList and sux4j. Ch.~5: Benchmarks vs STL \texttt{lower\_bound}, Dinklage et al., and classic predecessor structures. &
+\addressed \\
+\midrule
+
+15 &
+Demonstrate research is better than existing state of the art. &
+Ch.~4: $<$2\% internal fragmentation vs 18--35\% for ArrayList. Ch.~5: 3.5--5.2$\times$ speedup vs STL \texttt{lower\_bound}; 3.7--4.5$\times$ vs Dinklage et al. &
+\addressed \\
+\midrule
+
+16 &
+Add summary for all chapters. &
+Chapters 1--6 now include ``Chapter Summary'' sections at the end, summarising key contributions and linking to subsequent chapters. Chapter~7 serves as the thesis conclusion and naturally provides an overall summary. &
+\addressed \\
+\midrule
+
+17 &
+Prove correctness of proposed implementations/algorithms. &
+Ch.~4: GROW operation---Hoare triple specification with loop invariant proof (Initialisation, Maintenance, Termination). Ch.~5: XOR-LCP Correspondence Lemma and XOR-MinPos Correctness Theorem with formal proofs. &
+\addressed \\
+\midrule
+
+18 &
+Provide at least one case study or sizable example. &
+Ch.~4 Sec.~5: Inverted index compression case study. Ch.~2 Sec.~1: Student test scores motivating example used throughout. &
+\addressed \\
+\midrule
+
+19 &
+Demonstrate efficiency in achieving ITLB in dynamic setting. &
+Ch.~4: ``ITLB Analysis in Dynamic Context'' subsection added. Succinctness analysis showing $Z + o(Z)$ bounds. Growth factor trade-off table with theoretical bounds. &
+\addressed \\
+\midrule
+
+20 &
+Explain limitations of existing approaches, how proposed addresses them, evaluation. &
+Ch.~4: Standard doubling leads to 50\% fragmentation; solved by $f=n/w$ ($<$2\%). Ch.~5: Static-only limitation acknowledged; SIMD approach for niche applications. Ch.~6: $O(n)$ naive cost reduced to $O(\log n / \log \log n)$ via lazy synchronisation. &
+\addressed \\
+\midrule
+
+21 &
+Illustrate real-world scenarios for dynamic succinct data structures. &
+Ch.~4 Sec.~5: Inverted index compression (IR), dynamic bitvectors, streaming data (logs, time-series, event sourcing). Ch.~5: B-tree node search, cache-resident sets, database index lookups. &
+\addressed \\
+\midrule
+
+22 &
+Include algorithmic descriptions with verifiability analysis. &
+Ch.~4: GROW and Access algorithms with pseudocode and Hoare triple verification. Ch.~5: LCP, Blind Search, Compress, rankFW, rankFWImproved algorithms with formal proofs. Ch.~6: Lemma~1 with proof sketch. &
+\addressed \\
+\midrule
+
+23 &
+In Ch.~4, consider Patrick [22] with detailed comparative analysis. &
+Ch.~5 Sec.\ ``Comparison with Dinklage et al.'': Table comparing static vs dynamic support, set size range, query complexity. Empirical comparison showing 3.7--4.5$\times$ speedup. (Now in Ch.~5 due to thesis reorganisation.) &
+\addressed \\
+
+\end{longtable}
+
+\section*{Summary}
+
+All 23 examiner comments have been fully addressed. The thesis has undergone substantial revision, including restructuring from 5 to 7 chapters, addition of a formal methodology chapter, comprehensive benchmarking, formal correctness proofs, and improved academic writing throughout.
+
+\end{document}

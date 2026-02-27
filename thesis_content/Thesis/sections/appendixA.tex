@@ -1,0 +1,224 @@
+\chapter{Implementation Code Samples}
+\label{appendix:code}
+
+This appendix provides key implementation code for the data structures described in this thesis. The complete source code is available in the accompanying repository.
+
+\section{ResizableBitVector Implementation}
+\label{sec:rbv-code}
+
+The following Java code implements the extensible bitvector with the $f = n/w$ resize strategy described in Chapter~\ref{chap:extensible}.
+
+\begin{lstlisting}[language=Java, caption={ResizableBitVector.java - Core implementation}, label={lst:rbv}]
+package com.chp3.efano;
+
+import it.unimi.dsi.bits.BitVector;
+import it.unimi.dsi.bits.LongArrayBitVector;
+import it.unimi.dsi.sux4j.bits.SimpleSelect;
+
+/**
+ * Resizable bit vector with f = n/w resize strategy.
+ * Achieves o(n) space overhead while maintaining O(1)
+ * amortised append time.
+ */
+public class ResizableBitVector {
+    public long length = 0;
+    public long capacity = 64;
+    private LongArrayBitVector bv;
+
+    public ResizableBitVector() {
+        bv = LongArrayBitVector.getInstance(capacity);
+    }
+
+    /**
+     * Append a bit to the bitvector.
+     * Resizes by n/64 when full (f = n/w strategy).
+     */
+    public void append(int bit) {
+        if (length == capacity) {
+            // Resize by n/w = n/64 for 64-bit words
+            long newCapacity = length + (length >> 6);
+            if (newCapacity == capacity) {
+                newCapacity = capacity + 1;
+            }
+            bv.length(newCapacity);
+            capacity = newCapacity;
+        }
+        bv.set(length, bit == 1);
+        length++;
+    }
+
+    public BitVector bitVector() {
+        return bv.subVector(0, length);
+    }
+
+    public SimpleSelect buildSelectIndex() {
+        return new SimpleSelect(bv.subVector(0, length));
+    }
+}
+\end{lstlisting}
+
+\section{SIMD Predecessor Search Implementation}
+\label{sec:simd-code}
+
+The following C++ code implements the improved Fredman method using AVX2 SIMD instructions, as described in Chapter~\ref{chap:predecessor}.
+
+\begin{lstlisting}[language=C++, caption={Improved Fredman rank using XOR-MinPos}, label={lst:fredman}]
+#include <immintrin.h>
+#include <cstdint>
+
+/**
+ * Compute rank using SIMD XOR-MinPos method.
+ * Exploits: min(x XOR S[i]) = element with longest
+ * common prefix with x.
+ */
+template<int N>
+int rankFWImproved(const uint16_t* S, uint16_t x,
+                   int CT[][64]) {
+    // Broadcast query to all SIMD lanes
+    __m256i a = _mm256_set1_epi16(x);
+
+    // Load set elements
+    __m256i b = _mm256_loadu_si256(
+        (const __m256i*)S);
+
+    // Compute XOR differences
+    __m256i c = _mm256_xor_si256(a, b);
+
+    // Find minimum (element with longest LCP)
+    // Note: _mm256_minpos_epu16 operates on 128-bit
+    __m128i lo = _mm256_extracti128_si256(c, 0);
+    __m128i hi = _mm256_extracti128_si256(c, 1);
+    __m128i min_lo = _mm_minpos_epu16(lo);
+    __m128i min_hi = _mm_minpos_epu16(hi);
+
+    // Extract index and value
+    int idx_lo = _mm_extract_epi16(min_lo, 1);
+    int idx_hi = _mm_extract_epi16(min_hi, 1);
+    int val_lo = _mm_extract_epi16(min_lo, 0);
+    int val_hi = _mm_extract_epi16(min_hi, 0);
+
+    int i = (val_lo <= val_hi) ? idx_lo : idx_hi + 8;
+
+    // Compute LCP for correction
+    int j = __builtin_clzll(S[i] ^ x);
+
+    return CT[i][j];
+}
+\end{lstlisting}
+
+\section{Ajtai Method with Lookup Tables}
+\label{sec:ajtai-code}
+
+\begin{lstlisting}[language=C++, caption={Ajtai method using Answer and Correction tables}, label={lst:ajtai}]
+#include <immintrin.h>
+#include <cstdint>
+#include <vector>
+
+/**
+ * Ajtai's constant-time predecessor search.
+ * Uses pre-computed Answer Table (AT) and
+ * Correction Table (CT).
+ */
+class AjtaiPredecessor {
+private:
+    std::vector<int> AT;      // Answer Table
+    std::vector<std::vector<int>> CT;  // Correction Table
+    uint64_t mask;            // Significant bit mask
+    int b;                    // Number of sig. bits
+
+public:
+    void build(const uint16_t* S, int k) {
+        // Compute significant bit positions
+        mask = computeMask(S, k);
+        b = __builtin_popcountll(mask);
+
+        // Build Answer Table: O(2^b) entries
+        AT.resize(1 << b);
+        for (int i = 0; i < (1 << b); i++) {
+            AT[i] = blindSearch(i, S, k);
+        }
+
+        // Build Correction Table: k * 64 entries
+        CT.resize(k, std::vector<int>(64));
+        for (int i = 0; i < k; i++) {
+            for (int j = 0; j < 64; j++) {
+                CT[i][j] = computeCorrection(i, j, S, k);
+            }
+        }
+    }
+
+    int rank(const uint16_t* S, uint16_t x) {
+        // Compress query key
+        uint64_t y = _pext_u64(x, mask);
+
+        // Lookup in Answer Table
+        int i = AT[y];
+
+        // Compute LCP for correction
+        int j = __builtin_clzll(S[i] ^ x);
+
+        // Return corrected result
+        return CT[i][j];
+    }
+};
+\end{lstlisting}
+
+\section{Dynamic Prefix Sum Operations}
+\label{sec:prefixsum-code}
+
+\begin{lstlisting}[language=C++, caption={Dynamic prefix sum with lazy synchronisation}, label={lst:prefixsum}]
+#include <immintrin.h>
+#include <cstdint>
+
+/**
+ * Dynamic searchable prefix sum using SIMD.
+ * Based on Dietz's lazy synchronisation technique.
+ */
+class DynamicPrefixSum {
+private:
+    alignas(32) uint16_t A[16];  // Original array
+    alignas(32) uint16_t B[16];  // Prefix sums
+    alignas(32) uint16_t C[16];  // Update buffer
+    int counter = 0;
+    int m;  // Max gap in B
+
+public:
+    uint64_t sum(int i) {
+        // B[i] + sum of updates in C[0..i]
+        __m256i cv = _mm256_loadu_si256(
+            (const __m256i*)C);
+        // Horizontal sum up to position i
+        return B[i] + horizontalSum(cv, i);
+    }
+
+    void increment(int i) {
+        // Update buffer C
+        C[i]++;
+        counter++;
+
+        // Refresh B after m updates
+        if (counter >= m) {
+            refresh();
+            counter = 0;
+        }
+    }
+
+    int select(uint64_t j) {
+        // Use SIMD XOR-MinPos from Chapter 5
+        // to find position in compressed B
+        return simdSelect(j);
+    }
+
+private:
+    void refresh() {
+        // Synchronise B with accumulated updates
+        for (int i = 0; i < 16; i++) {
+            B[i] += horizontalSum(C, i);
+        }
+        // Reset update buffer
+        std::memset(C, 0, sizeof(C));
+        // Recompute max gap
+        m = computeMaxGap();
+    }
+};
+\end{lstlisting}
