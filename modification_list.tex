@@ -35,7 +35,9 @@
 
 \section*{Introduction}
 
-This document details the modifications made to the thesis in response to the examiners' report dated 3 October 2025. Each of the 23 examiner comments is listed alongside the specific action taken, with references to the relevant sections of the revised thesis. The thesis has been substantially restructured from 5 chapters to 7 chapters, with a new methodology chapter (Chapter~3) and a dedicated conclusion chapter (Chapter~7) added to address the examiners' recommendations.
+This document details the modifications made to the thesis in response to the examiners' report dated 3 October 2025 and subsequent supervisor meeting recommendations. Each of the 23 examiner comments is listed alongside the specific action taken, with references to the relevant sections of the revised thesis. The thesis has been substantially restructured from 5 chapters to 7 chapters, with a new methodology chapter (Chapter~3) and a dedicated conclusion chapter (Chapter~7) added to address the examiners' recommendations.
+
+Following a post-viva meeting with the supervisor, additional recommendations were identified and are listed as entries 24*--26* below. The asterisk (\texttt{*}) in the serial number distinguishes supervisor comments from the original examiner comments.
 
 \vspace{0.5cm}
 
@@ -195,11 +197,32 @@ Ch.~4: GROW and Access algorithms with pseudocode and Hoare triple verification.
 In Ch.~4, consider Patrick [22] with detailed comparative analysis. &
 Ch.~5 Sec.\ ``Comparison with Dinklage et al.'': Table comparing static vs dynamic support, set size range, query complexity. Empirical comparison showing 3.7--4.5$\times$ speedup. (Now in Ch.~5 due to thesis reorganisation.) &
 \addressed \\
+\midrule
+
+\multicolumn{4}{l}{\textit{Post-viva supervisor meeting recommendations (marked with *)}} \\
+\midrule
+
+24* &
+Space notation: remove big-$O$ from exact bound and always add ``bits'' as unit of measurement for space usage. &
+Changed $O(n \log n) + o(n)$ to $n \log n + o(n)$ bits in Ch.~6 and Ch.~7. Added ``bits'' unit to all space usage expressions in Ch.~4 and Ch.~7 where missing. &
+\addressed \\
+\midrule
+
+25* &
+Reflective section: mention that larger SIMD registers could further benefit the research. &
+Ch.~7 Sec.~2 (Reflective Analysis, ``Hardware Evolution'' paragraph): Added sentence noting that experiments used 256-bit AVX2 registers and that wider SIMD registers (e.g., 512-bit AVX-512) could further extend the applicability of these techniques. &
+\addressed \\
+\midrule
+
+26* &
+Table of Contents: add References section to the table of contents. &
+Added \texttt{\textbackslash addcontentsline\{toc\}\{chapter\}\{\textbackslash bibname\}} before \texttt{\textbackslash bibliography} in \texttt{main.tex} so that the References section now appears in the table of contents. &
+\addressed \\
 
 \end{longtable}
 
 \section*{Summary}
 
-All 23 examiner comments have been fully addressed. The thesis has undergone substantial revision, including restructuring from 5 to 7 chapters, addition of a formal methodology chapter, comprehensive benchmarking, formal correctness proofs, and improved academic writing throughout.
+All 23 examiner comments and 3 supervisor post-meeting recommendations have been fully addressed. The thesis has undergone substantial revision, including restructuring from 5 to 7 chapters, addition of a formal methodology chapter, comprehensive benchmarking, formal correctness proofs, and improved academic writing throughout.
 
 \end{document}

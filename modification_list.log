@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.10.20)  9 FEB 2026 15:36
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.10.20)  11 MAR 2026 16:02
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -359,7 +359,7 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <6> on input line 25.
 
 ! Undefined control sequence.
-l.76 ...l formulas (e.g., $S(D) \leq c \cdot \text
+l.78 ...l formulas (e.g., $S(D) \leq c \cdot \text
                                                   {ITLB}$). Ch.~3 Sec.~5: Fu...
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -367,29 +367,59 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
+LaTeX Font Info:    Trying to load font information for OMS+cmtt on input line 
+219.
+LaTeX Font Info:    No file OMScmtt.fd. on input line 219.
+
+LaTeX Font Warning: Font shape `OMS/cmtt/m/n' undefined
+(Font)              using `OMS/cmsy/m/n' instead
+(Font)              for symbol `textbackslash' on input line 219.
+
+
+Overfull \hbox (40.74048pt too wide) in paragraph at lines 219--219
+\OMS/cmtt/m/n/12 n\OT1/cmtt/m/n/12 addcontentsline\OMS/cmtt/m/n/12 f\OT1/cmtt/m
+/n/12 toc\OMS/cmtt/m/n/12 gf\OT1/cmtt/m/n/12 chapter\OMS/cmtt/m/n/12 gfn\OT1/cm
+tt/m/n/12 bibname\OMS/cmtt/m/n/12 g 
+ []
+
+
+Overfull \hbox (4.68594pt too wide) in alignment at lines 62--222
+ [] [] [] [] 
+ []
+
+
+Package longtable Warning: Column widths have changed
+(longtable)                in table 1 on input line 222.
+
 [1
 
 {/usr/local/texlive/2025/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-[2] [3]
+[2] [3] [4]
 
-[4]
+Package longtable Warning: Table widths have changed. Rerun LaTeX.
+
+
 
 [5] (./modification_list.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
+
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
 Package rerunfilecheck Info: File `modification_list.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 9692 strings out of 473190
- 150844 string characters out of 5715799
- 598473 words of memory out of 5000000
- 32849 multiletter control sequences out of 15000+600000
+ 9702 strings out of 473190
+ 150995 string characters out of 5715799
+ 604473 words of memory out of 5000000
+ 32859 multiletter control sequences out of 15000+600000
  563608 words of font info for 52 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 69i,7n,79p,531b,571s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 69i,7n,79p,571b,577s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb
 ></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb>
 </usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></
@@ -397,7 +427,7 @@ usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></us
 r/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr
 /local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/
 local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on modification_list.pdf (5 pages, 93027 bytes).
+Output written on modification_list.pdf (5 pages, 100058 bytes).
 PDF statistics:
  70 PDF objects out of 1000 (max. 8388607)
  48 compressed objects within 1 object stream

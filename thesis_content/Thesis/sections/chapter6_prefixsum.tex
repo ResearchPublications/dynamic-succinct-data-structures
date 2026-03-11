@@ -154,7 +154,7 @@ Using SIMD registers and builtin instructions, $C$ and $D$ can be stored in AVX-
 \textbf{\textit{access(i)}}: To support $access(i)$, we simply return $sum(i) - sum(i-1)$.\par
 \textbf{\textit{increment(i)}}: $C$ is simply updated by generating an update $mask$ starting with all elements in the mask to be zero, and then set $C[i]$ to 1 for $0 \leq i < n$. Adding the $mask$ and $C$ is a simple SIMD addition in $O(1)$. The update counter $counter$ is then incremented. If $counter = m$, $B$ is refreshed by setting $B[i] = B[i] + \sum C[i]$ for $0 \leq i < n$. $B$ is also compressed into $D$ as described earlier, then recompute $m$ and reset $counter$.\par
 \textbf{\textit{select(j)}}: As $D$ stores the compressed values of $B$, we can equally compress $j$. Then search for $j$ in $D$ using SIMD instructions as described in Section \ref{improved-fredman}. This is also done in $O(1)$.\par
-It is clear that for space usage, $B$ can be stored using $O(n\log n)$. Only $O(w^{O(1)}$ to store $C$ and $D$, which is $o(n)$. This data structure uses $O(n\log n) + o(n)$.
+It is clear that for space usage, $B$ can be stored using $n\log n$ bits. Only $O(w^{O(1)}$ to store $C$ and $D$, which is $o(n)$. This data structure uses $n\log n + o(n)$ bits.
 \section{Optimisations}
 The \textit{access(i)} and \textit{update} operations can be optimised further. During updates, instead of updating a single element in $C$, a mask can be generated that sets $mask[i]$ for all $0 \leq i < n$. Then $mask[j] = 1$ is set for all $i \leq j < n$. This way, $C$ is maintained as a prefix sum as well. When refreshing, only $B[i] = B[i] + C[i]$ needs to be set. Likewise, when accessing elements or performing sum operations, $C$ can be directly accessed without having to sum up the values in $C$.
 
@@ -171,7 +171,7 @@ This chapter addressed the problem of dynamic searchable prefix sum, which maint
 
     \item Integration with the improved Fredman predecessor search technique from Chapter~\ref{chap:predecessor} to support constant-time \textit{select} operations by maintaining compressed representations of prefix sums.
 
-    \item Space analysis showing that the data structure uses $O(n \log n) + o(n)$ bits, with the $o(n)$ overhead coming from the SIMD-compatible buffer structures.
+    \item Space analysis showing that the data structure uses $n \log n + o(n)$ bits, with the $o(n)$ overhead coming from the SIMD-compatible buffer structures.
 \end{itemize}
 
 The proposed implementation builds upon the data structures developed in earlier chapters, demonstrating how extensible arrays (Chapter~\ref{chap:extensible}) and fast predecessor search (Chapter~\ref{chap:predecessor}) can be composed to create efficient dynamic searchable prefix sum structures. Future work includes empirical evaluation of the proposed implementation and comparison with existing solutions such as Pibiri's~\cite{Pibiri_2020} C++ implementations.

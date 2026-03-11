@@ -136,6 +136,7 @@
 \contentsline {subsection}{\numberline {7.4.2}Medium-Term Research}{92}{}%
 \contentsline {subsection}{\numberline {7.4.3}Long-Term Vision}{92}{}%
 \contentsline {section}{\numberline {7.5}Concluding Remarks}{93}{}%
+\contentsline {chapter}{References}{93}{}%
 \contentsline {chapter}{Appendices}{101}{}%
 \contentsline {chapter}{\numberline {A}Implementation Code Samples}{102}{}%
 \contentsline {section}{\numberline {A.1}ResizableBitVector Implementation}{102}{}%

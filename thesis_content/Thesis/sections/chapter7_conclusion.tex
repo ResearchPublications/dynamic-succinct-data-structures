@@ -12,9 +12,9 @@ Succinct data structures are an important component of data processing systems t
 The problem of resizing arrays and its effects on internal fragmentation was investigated. A simple yet succinct solution to resizing arrays of non-standard word-size width using variable growth factors was proposed. The key contributions include:
 
 \begin{itemize}
-    \item An analysis demonstrating that using a growth factor of $f = n/w$ (where $n$ is the current size and $w$ is the word size) achieves amortised $O(1)$ append time while limiting internal fragmentation to $o(n)$ space.
+    \item An analysis demonstrating that using a growth factor of $f = n/w$ (where $n$ is the current size and $w$ is the word size) achieves amortised $O(1)$ append time while limiting internal fragmentation to $o(n)$ bits.
 
-    \item An append-only dynamic bitvector implementation for the special case of $width=1$, supporting rank and select operations with $n + o(n)$ space usage.
+    \item An append-only dynamic bitvector implementation for the special case of $width=1$, supporting rank and select operations with $n + o(n)$ bits.
 
     \item An append-only dynamic Elias-Fano implementation that operates correctly even when the universe size $u$ is not known beforehand, achieving space usage close to the Information Theoretic Lower Bound.
 \end{itemize}
@@ -42,14 +42,14 @@ The problem of dynamic searchable prefix sum with increment and select operation
 
     \item Integration with the improved Fredman predecessor search to support constant-time select operations on prefix sums.
 
-    \item A space-efficient design using $O(n \log n) + o(n)$ bits while maintaining competitive query performance.
+    \item A space-efficient design using $n \log n + o(n)$ bits while maintaining competitive query performance.
 \end{itemize}
 
 \section{Reflective Analysis of the Research Process}
 
 The research process followed the Algorithm Engineering methodology, iterating between theoretical analysis and empirical evaluation. Several insights emerged from this process:
 
-\textbf{Hardware Evolution}: The feasibility of implementing constant-time predecessor search was enabled by advances in processor instruction sets (AVX2, BMI2). Algorithms that were impractical two decades ago are now implementable and efficient. This suggests that theoretical algorithms should be periodically re-evaluated as hardware capabilities evolve.
+\textbf{Hardware Evolution}: The feasibility of implementing constant-time predecessor search was enabled by advances in processor instruction sets (AVX2, BMI2). Algorithms that were impractical two decades ago are now implementable and efficient. Notably, the experiments in this thesis used 256-bit AVX2 registers; wider SIMD registers such as those provided by AVX-512 (512 bits) could further extend the applicability of these techniques to larger set sizes and improved throughput. This suggests that theoretical algorithms should be periodically re-evaluated as hardware capabilities evolve.
 
 \textbf{Constants Matter}: While asymptotic complexity provides important theoretical guarantees, the constants hidden in $O(\cdot)$ notation significantly impact practical performance. The improved Fredman method demonstrates that reducing the number of instructions, even within the same asymptotic complexity class, yields measurable speedups.
 
