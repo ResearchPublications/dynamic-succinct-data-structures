@@ -2,8 +2,10 @@
 \label{chap:extensible}
 
 This chapter presents existing work in the area of extensible arrays. Dynamic arrays that support append-only operations alongside the standard static operations are introduced. The focus is then placed on extensible arrays of non-standard width ($1\leq width \leq w$). These dynamic arrays are subsequently utilised to build an efficient Elias-Fano implementation that supports \textit{append-only} operations. Variations of this data structure that perform well in various settings are presented.
+
+The novel contributions of this chapter are: (i) an analysis of resize factors showing that $f = n/w$ achieves amortised $O(1)$ resize time while limiting internal fragmentation to $o(n)$ bits; (ii) a practical append-only bitvector supporting rank and select with $n + o(n)$ bits of space; (iii) an extensible Elias-Fano implementation that operates when the universe $u$ is unknown beforehand, maintaining space close to the Information Theoretic Lower Bound; and (iv) empirical benchmarks validating these results against standard library implementations.
 \section{Extensible Array}
- Arrays are excellent example of static data structures that have been studied extensively \cite{Navarro_2016}. Vector is the most basic form of extendible array that supports random access in constant time. They have been shown to solve a number of dynamic data structures problem such as randomised queues, stacks, priority queues and queues \cite{Brodnik_1999, Navarro_2016, Brodnik_1993}, and have been used in building complex compact data structures \cite{Munro_2001, Raman_2003}. An Extendible Array (EA) built upon the idea of vectors is described in this chapter. Other variants of EAs of non-standard widths (such as bit-vectors, shorts, characters, etc.) are also presented. The operations supported are:
+ Arrays are excellent examples of static data structures that have been studied extensively \cite{Navarro_2016}. Vector is the most basic form of extendible array that supports random access in constant time. They have been shown to solve a number of dynamic data structure problems such as randomised queues, stacks, priority queues and queues \cite{Brodnik_1999, Navarro_2016, Brodnik_1993}, and have been used in building complex compact data structures \cite{Munro_2001, Raman_2003}. An Extendible Array (EA) built upon the idea of vectors is described in this chapter. Other variants of EAs of non-standard widths (such as bit-vectors, shorts, characters, etc.) are also presented. The operations supported are:
 \begin{itemize}
     \item $create(n)$: Create an array of initial size $n$
     \item $access(i)$: Access the item at index $i$.
@@ -90,7 +92,7 @@ Brodnik \cite{Brodnik_1999} proposed a singly extendible array that use $n + O(\
 \multicolumn{8}{c}{\underbrace{\hphantom{23 \quad 65 \quad 23 \quad 45 \quad 33 \quad 98 \quad 12 \quad 19}}_{\text{$SB_3$}}} \\
 \end{array}\]
     \caption{Consecutive blocks of $2^i$ where $0 \leq i \leq \log n$}
-    \label{fig:enter-label}
+    \label{fig:brodnik-blocks}
 \end{figure}
 The algorithm for access operation is shown below. A key aspect of it is how to compute the position of the leading set bit in the binary representation of $i+1$ in constant time. Brodnik \cite{Brodnik_1993} gives a method that uses basic arithmetic and logic operators to achieve this in constant time. But modern machines allows for this as well using Bit Scan Reverse instruction \cite{intel_bsr}.\par
 \begin{table}[ht]
@@ -112,13 +114,14 @@ The algorithm for access operation is shown below. A key aspect of it is how to 
 As all the steps in $access$ can be done in constant time if we ignore the cost of dynamic memory allocation, the running time is $O(1)$. Space wasted from internal fragmentation is $O(\sqrt{n}$ words which they show to be optimal.
 \subsection{Collection of Extensible Arrays}
 Joannou \cite{Stelios_2001} described various dynamic random access data structures built as Collection of Extendible Arrays (CEA), which are essentially, a vector of pointers to other vectors. A vector of size $n$ is divided into consecutive blocks of fixed size $b > 1$, and records are stored in fixed-size data blocks of size $b$ each. A vector of $n/b$ pointers (called the index block) stores a pointer to each of the data-blocks. To perform $access(i)$ operation, we only fetch the $(i \mod b)-th$ entry in the $\lfloor i/b \rfloor-th$ data block. It is clear that access operation is $O(1)$ (though, could be slower due to 2-random accesses), and $O(1)$ amortised constant time for grow operation. This approach clearly reduces the internal fragmentation, though, the choice of $b$ needs to be carefully made to avoid having $\theta (b)$ wasted space per data block. \par
-Another approach is to vary the size of the blocks as done in \cite{Brodnik_1999}. The vector of size $n$ is divided into super blocks of size $1, 2, 3 \ldots, 2^{\lfloor \log_2 (n) \rfloor}$. And each super block is sub-divided into data blocks of equal sizes. The access operation takes constant time, while grow operations takes $O(1)$ amortised time. The wasted space is $O\sqrt{n}$ words. The modified Brodnik shares same analysis, though handles the data structure a bit differently. All data blocks are of same initial size $b=2$. A grow operation adds an element to the last data block, and when full, we either double the index or copy two existing data blocks into a newly created data block of size $2b$. \par
+Another approach is to vary the size of the blocks as done in \cite{Brodnik_1999}. The vector of size $n$ is divided into super blocks of size $1, 2, 3 \ldots, 2^{\lfloor \log_2 (n) \rfloor}$. And each super block is sub-divided into data blocks of equal sizes. The access operation takes constant time, while grow operations take $O(1)$ amortised time. The wasted space is $O\sqrt{n}$ words. The modified Brodnik shares same analysis, though handles the data structure a bit differently. All data blocks are of same initial size $b=2$. A grow operation adds an element to the last data block, and when full, we either double the index or copy two existing data blocks into a newly created data block of size $2b$. \par
 Global Brodnik tries to minimised the internal fragmentation by "self-tunning" the block sizes to an optimal size of $b=\theta (\sqrt{N/t})$ where $t$ is the number of current EAs created and $N$ is the total number of elements. Whenever a block size is twice $b$, the block is either halved or doubled which leads to the re-organisation of all the EAs in the CEA. Access time is $O(1)$ and grow is amortised constant too. The internal fragmentation is $O(\sqrt{Nt)}$. \par
 One thing to note is that CEAs are normally slower in supporting random $access$ than conventional Vector representation. This due to making 2 random access to arrays (index and data blocks respectively), while conventional vector needs only one random access. A solution to this is to make the index block as small as possible to fit into the fast memories so that one of the random accesses will at least be very fast. This is explored later in depth.\par
 Raman \cite{Raman_2001} proposed two implementations of collection of extendible arrays (CEAs) using $o(n)$ extra space. They considered EAs that are of non-standard widths with first implementation supporting all operations in $O(\log n/ \log \log n)$ amortised time while the second supports look up in constant time and updates in $O(n^e)$ time. Their data structure has more functionalities, as it supports $insertion$ at any index $i < n$, while the approach presented here supports only $insertion$ at the end of $A$. Raman and Rao \cite{Raman_2003} proposed an EA with support for elements with various $width$. If $r$ is the width of the elements, they store the EA using $s+O(aw + \sqrt{saw})$ bits of space where $n$ is the number of elements in the EA, $s = n*r$, $a$ is the number of EAs. Joannou \cite{Stelios_2001} also gave an empirical study of the CEAs while emphasising on external fragmentation, whereas the focus here is on the representation of one-dimensional arrays. The need to perform 2 random memory accesses to perform an $access$ in turn slows down the data structure in practice.
 % \subsection{Implementation}
 % \subsection{Memory Fragmentation}
 % \subsection{Reducing Memory Fragmentation}
+\FloatBarrier
 \section{Proposed Data Structure}
 The simple approach of resizing extendible arrays by a fixed factor instead of doubling is considered. The aim is to identify the optimal resize factor for vectors of different widths. As such, not only elements of known word-size (32-bits and 64-bits) are considered, but also extendable arrays of elements that require less than word-size number of bits to be represented (such as bit-vectors, characters, shorts, etc.).\par
 Starting with a vector $V$ having initial capacity of $c=O(w)$ (where $w$ is the word-size), the vector is increased when full by an additive factor, say $f$. The appends are done in bits (as the vectors can be of any width ($1\leq width \leq w$)). \textbf{Appending is done in bits} until the array is full, then the array is re-sized (a new array of bigger size is created and \textbf{copying is done in words}). This feature is exploited to show that doubling the size is not always necessary; rather, increasing by a factor less than double provides two gains---reduced internal fragmentation while remaining fast. In general, the amortised cost of re-sizing an Array of $n$ bits by $f=k$ bits is\par
@@ -172,6 +175,7 @@ By finding the general term of the geometric progression and determining the com
 $$a_k = n(\frac{f+1}{f})^k$$
 From the earlier example, to determine how many resize operations are needed for $f = 1/4$, the following is solved:
 $16(\frac{5}{4})^k = 512$, using logarithms, we solve for $k$ as $k \geq 16$. This means that new need at least $16$ resize operations to get $512$ elements into the array. Compared with Example 1, that's almost 3 times more resize operations.
+\FloatBarrier
 \section{Dynamic Data Structures}
 Three dynamic data structures are proposed and described: append-only bitvector, append-only Elias-Fano, and Dynamic Elias-Fano with special inserts. Append-only bit-vectors are specialised variants of vectors (with \textit{width=1}). The implementation reduces internal fragmentation to the minimum while remaining fast (append in amortised constant time and access in $O(1)$). On the other hand, Elias-Fano is able to compress a given set $S$ close to its $0^{th}$ order empirical entropy only if $n=|S|$ and universe $u$ are known. The question arises: what happens if only $u$ is known but not $n$, or neither $u$ nor $n$ is known? A technique to apply Elias-Fano on $S$ even without this information has been developed. However, this technique incurs some overhead in space and time, and it is shown that this overhead is a negligible factor.
 
@@ -312,6 +316,7 @@ The approach presented here starts with an Elias-Fano $EF(S)$ with an unknown un
 \textbf{Property 1:} Given a monotone sequence $S$ where $n = |S|$, let $S[i, j)$ and $S(j, n]$ represents \textit{sub-sequences} of $S$. For any $i < j < n$, we have $$EF(S[i, j)) + EF(S(j, n]) \leq EF(S[i,n])$$
 The idea of Collection of Extensible Arrays (CEA)~\cite{Stelios_2001, Raman_2003} is used by dividing $S$ into data blocks of sizes $b_i = 2^i$ where $0 \leq i \leq \log n$. $S$ is stored as a collection of ``Extendible Elias-Fano''. Each data block $B_i$ is an Elias-Fano representation of the block starting with size $n_i$, and resized by $f$ when full. An array of pointers of size $\log ^2n$ called the index block $I$ holds pointers to each data block with $I[i]$ pointing to block $B_i$. The idea is that $B_i$ can hold the Elias-Fano representation of increasing monotone integers with known universe of $2^i - 1$ and unknown length $\leq b_i$.\par
 The access operation first determines the Data block $B_i$ to access by checking the index block, then performing the normal access operation on $B_i$. As $I$ is just $\log n$, it can fit into faster memory (cache) with very limited impact on the query. Further improvement can be achieved by $\delta$ encoding the Data blocks, thereby reducing the universe $B_i(u)$ of each data block and achieving better compression. A likely drawback is that lower level blocks may have longer sequences to store, which may slow down the resize process. Further experimentation to improve on this is planned. 
+\FloatBarrier
 \section{Experiments}
 \label{sec:ea-experiments}
 
@@ -391,6 +396,7 @@ Random access performance was measured by performing 100,000 random lookups on s
 
 The access overhead is expected due to the bit-level addressing required by \texttt{ResizableBitVector}. However, for applications where space efficiency is critical (such as large-scale bitvectors), this trade-off is acceptable.
 
+\FloatBarrier
 \section{Applications of Extensible Arrays}
 \label{sec:ea-applications}
 
@@ -439,6 +445,7 @@ The operations supported by this data structure are now described
     \item \textit{append(i)}: To append, it is first checked whether the most recent super-block is full, then resizing by $f = o(n)$ is performed. The element is then appended to the first available position in the last super-block.
 \end{itemize}
 
+\FloatBarrier
 \section{Chapter Summary}
 
 This chapter addressed the problem of extensible array representation with focus on reducing internal fragmentation while maintaining efficient operations. The following contributions were presented:

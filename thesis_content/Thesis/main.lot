@@ -9,29 +9,29 @@
 \contentsline {table}{\numberline {3.2}{\ignorespaces Hardware specifications for experimental evaluation}}{29}{}%
 \contentsline {table}{\numberline {3.3}{\ignorespaces Software environment specifications}}{29}{}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {4.1}{\ignorespaces Append $24$ to the vector and resize}}{34}{}%
-\contentsline {table}{\numberline {4.2}{\ignorespaces Worst-case capacity after resize for various resize factors $f$. The percentages below each factor indicate maximum internal fragmentation. Using $f = n/w$ achieves $<$2\% fragmentation.}}{39}{}%
+\contentsline {table}{\numberline {4.1}{\ignorespaces Append $24$ to the vector and resize}}{35}{}%
+\contentsline {table}{\numberline {4.2}{\ignorespaces Worst-case capacity after resize for various resize factors $f$. The percentages below each factor indicate maximum internal fragmentation. Using $f = n/w$ achieves $<$2\% fragmentation.}}{40}{}%
 \contentsline {table}{\numberline {4.3}{\ignorespaces Trade-off between growth factor, fragmentation, and space efficiency}}{43}{}%
-\contentsline {table}{\numberline {4.4}{\ignorespaces Append operation performance comparison}}{49}{}%
-\contentsline {table}{\numberline {4.5}{\ignorespaces Space efficiency comparison. The thesis \texttt {ResizableBitVector} maintains $<$2\% fragmentation vs ArrayList's 18--35\%.}}{50}{}%
-\contentsline {table}{\numberline {4.6}{\ignorespaces Random access performance. The bit-level addressing in \texttt {ResizableBitVector} adds 45--65\% overhead compared to word-aligned \texttt {ArrayList} access.}}{50}{}%
+\contentsline {table}{\numberline {4.4}{\ignorespaces Append operation performance comparison}}{50}{}%
+\contentsline {table}{\numberline {4.5}{\ignorespaces Space efficiency comparison. The thesis \texttt {ResizableBitVector} maintains $<$2\% fragmentation vs ArrayList's 18--35\%.}}{51}{}%
+\contentsline {table}{\numberline {4.6}{\ignorespaces Random access performance. The bit-level addressing in \texttt {ResizableBitVector} adds 45--65\% overhead compared to word-aligned \texttt {ArrayList} access.}}{51}{}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {5.1}{\ignorespaces Instructions used and their descriptions}}{61}{}%
-\contentsline {table}{\numberline {5.2}{\ignorespaces Result of shifting input of various array sizes by values between $0 - 12000$.}}{65}{}%
-\contentsline {table}{\numberline {5.3}{\ignorespaces Comparison of approaches: this work vs Dinklage et al.~\cite {Patrick_2021}}}{71}{}%
-\contentsline {table}{\numberline {5.4}{\ignorespaces Speedup relative to linear search. Higher is better. The Ajtai method achieves 3.5--5.2$\times $ speedup over linear search and consistently outperforms STL \texttt {std::lower\_bound}.}}{74}{}%
-\contentsline {table}{\numberline {5.5}{\ignorespaces Query time for $2^{25}$ predecessor queries. The $O(1)$ Ajtai method from this work outperforms Dinklage et al.'s $O(\log \log u)$ B-tree by 3.7--4.5$\times $ for small static sets.}}{75}{}%
-\contentsline {table}{\numberline {5.6}{\ignorespaces Comprehensive comparison of predecessor data structures. Variables: $k$ = set size, $b$ = significant bit positions, $u$ = universe size, $n$ = number of elements, $w$ = word size.}}{76}{}%
-\contentsline {table}{\numberline {5.7}{\ignorespaces Practical space-time trade-offs. The improved Fredman method offers the best balance of speed and space efficiency for typical use cases.}}{77}{}%
+\contentsline {table}{\numberline {5.1}{\ignorespaces Instructions used and their descriptions}}{62}{}%
+\contentsline {table}{\numberline {5.2}{\ignorespaces Result of shifting input of various array sizes by values between $0 - 12000$.}}{66}{}%
+\contentsline {table}{\numberline {5.3}{\ignorespaces Comparison of approaches: this work vs Dinklage et al.~\cite {Patrick_2021}}}{72}{}%
+\contentsline {table}{\numberline {5.4}{\ignorespaces Speedup relative to linear search. Higher is better. The Ajtai method achieves 3.5--5.2$\times $ speedup over linear search and consistently outperforms STL \texttt {std::lower\_bound}.}}{75}{}%
+\contentsline {table}{\numberline {5.5}{\ignorespaces Query time for $2^{25}$ predecessor queries. The $O(1)$ Ajtai method from this work outperforms Dinklage et al.'s $O(\log \log u)$ B-tree by 3.7--4.5$\times $ for small static sets.}}{76}{}%
+\contentsline {table}{\numberline {5.6}{\ignorespaces Comprehensive comparison of predecessor data structures. Variables: $k$ = set size, $b$ = significant bit positions, $u$ = universe size, $n$ = number of elements, $w$ = word size.}}{77}{}%
+\contentsline {table}{\numberline {5.7}{\ignorespaces Practical space-time trade-offs. The improved Fredman method offers the best balance of speed and space efficiency for typical use cases.}}{78}{}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {6.1}{\ignorespaces Array $A$ stored plainly to support \textit {increment/decrement} in $O(1)$}}{81}{}%
-\contentsline {table}{\numberline {6.2}{\ignorespaces Array $B$ such that $B[i] = sum(i)$ to support \textit {sum} in $O(1)$}}{81}{}%
-\contentsline {table}{\numberline {6.3}{\ignorespaces Array $A$ with original sequence}}{85}{}%
-\contentsline {table}{\numberline {6.4}{\ignorespaces Array $B$ with possibly out of \textit {sync} prefix sums}}{85}{}%
-\contentsline {table}{\numberline {6.5}{\ignorespaces SIMD Array $C$ with all the recent updates}}{85}{}%
-\contentsline {table}{\numberline {6.6}{\ignorespaces Array $B$ after $m=12$ updates is now refreshed with $C$}}{85}{}%
+\contentsline {table}{\numberline {6.1}{\ignorespaces Array $A$ stored plainly to support \textit {increment/decrement} in $O(1)$}}{82}{}%
+\contentsline {table}{\numberline {6.2}{\ignorespaces Array $B$ such that $B[i] = sum(i)$ to support \textit {sum} in $O(1)$}}{82}{}%
+\contentsline {table}{\numberline {6.3}{\ignorespaces Array $A$ with original sequence}}{86}{}%
+\contentsline {table}{\numberline {6.4}{\ignorespaces Array $B$ with possibly out of \textit {sync} prefix sums}}{86}{}%
+\contentsline {table}{\numberline {6.5}{\ignorespaces SIMD Array $C$ with all the recent updates}}{87}{}%
+\contentsline {table}{\numberline {6.6}{\ignorespaces Array $B$ after $m=12$ updates is now refreshed with $C$}}{87}{}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {B.1}{\ignorespaces Lines of code by component. Excludes blank lines and comments. Third-party libraries (sux4j, fastutil) are not counted.}}{112}{}%
-\contentsline {table}{\numberline {B.2}{\ignorespaces Computing environment for experimental evaluation}}{120}{}%
+\contentsline {table}{\numberline {B.1}{\ignorespaces Lines of code by component. Excludes blank lines and comments. Third-party libraries (sux4j, fastutil) are not counted.}}{115}{}%
+\contentsline {table}{\numberline {B.2}{\ignorespaces Computing environment for experimental evaluation}}{123}{}%

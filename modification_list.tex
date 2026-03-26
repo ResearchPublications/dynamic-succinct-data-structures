@@ -7,6 +7,7 @@
 \usepackage{setspace}
 \usepackage{parskip}
 \usepackage{enumitem}
+\usepackage{amsmath}
 \usepackage{hyperref}
 
 % Column type for wrapping text
@@ -37,7 +38,7 @@
 
 This document details the modifications made to the thesis in response to the examiners' report dated 3 October 2025 and subsequent supervisor meeting recommendations. Each of the 23 examiner comments is listed alongside the specific action taken, with references to the relevant sections of the revised thesis. The thesis has been substantially restructured from 5 chapters to 7 chapters, with a new methodology chapter (Chapter~3) and a dedicated conclusion chapter (Chapter~7) added to address the examiners' recommendations.
 
-Following a post-viva meeting with the supervisor, additional recommendations were identified and are listed as entries 24*--26* below. The asterisk (\texttt{*}) in the serial number distinguishes supervisor comments from the original examiner comments.
+Following a post-viva meeting with the supervisor, additional recommendations were identified and are listed as entries 24*--26* below. The asterisk (\texttt{*}) in the serial number distinguishes supervisor comments from the original examiner comments. A subsequent internal supervisor review identified further refinements, listed as entries 27**--30** below, marked with a double asterisk (\texttt{**}).
 
 \vspace{0.5cm}
 
@@ -218,11 +219,38 @@ Ch.~7 Sec.~2 (Reflective Analysis, ``Hardware Evolution'' paragraph): Added sent
 Table of Contents: add References section to the table of contents. &
 Added \texttt{\textbackslash addcontentsline\{toc\}\{chapter\}\{\textbackslash bibname\}} before \texttt{\textbackslash bibliography} in \texttt{main.tex} so that the References section now appears in the table of contents. &
 \addressed \\
+\midrule
+
+\multicolumn{4}{l}{\textit{Internal supervisor review recommendations (marked with **)}} \\
+\midrule
+
+27** &
+Typographical consistency: fix minor spacing, grammar, and spelling issues throughout. &
+Fixed subject-verb agreement errors (Ch.~2: ``was shown'' $\to$ ``were shown''; Ch.~4: ``operations takes'' $\to$ ``operations take''; Ch.~5: ``shares'' $\to$ ``share'', ``includes'' $\to$ ``include'', ``load and copy'' $\to$ ``loads and copies''). Fixed pluralisation (Ch.~4: ``excellent example'' $\to$ ``excellent examples'', ``structures problem'' $\to$ ``structure problems''). Fixed typos (Ch.~2: ``\textbackslash per'' $\to$ ``\textbackslash par'' in 2 places, double period removed; Ch.~5: ``apparoach'' $\to$ ``approach'', ``extract space'' $\to$ ``extra space'', ``values store'' $\to$ ``values stored''). Removed informal second-person ``you'' in Ch.~5. Fixed placeholder figure label \texttt{fig:enter-label} $\to$ \texttt{fig:brodnik-blocks} in Ch.~4. Escaped special characters (\texttt{\&}, \texttt{\#}) in algorithm pseudocode (Ch.~5) and footnote URLs (Ch.~6). Added \texttt{url} package to resolve undefined \texttt{\textbackslash url} and \texttt{\textbackslash doi} commands. &
+\addressed \\
+\midrule
+
+28** &
+Figure placements: some figures appear far from their references. &
+Added \texttt{\textbackslash usepackage\{placeins\}} to \texttt{main.tex} and inserted \texttt{\textbackslash FloatBarrier} before 16 major section boundaries across Ch.~4 (5 barriers), Ch.~5 (5 barriers), and Ch.~6 (6 barriers). Changed segment tree figure placement from \texttt{[h]} to \texttt{[H]} in Ch.~6 for consistent strict positioning. &
+\addressed \\
+\midrule
+
+29** &
+More explicit separation of original vs.\ improved contributions at the start of each contribution chapter. &
+Added a ``novel contributions'' paragraph at the opening of Ch.~4 (extensible arrays: resize factor analysis, append-only bitvector, extensible Elias-Fano, empirical benchmarks), Ch.~5 (predecessor search: Ajtai implementation, improved Fredman method, significant bit position analysis, empirical comparisons), and Ch.~6 (prefix sum: Dietz lazy synchronisation with SIMD, Fredman integration, space analysis). These complement the existing detailed Chapter Summary sections at the end of each chapter. &
+\addressed \\
+\midrule
+
+30** &
+Dynamic Prefix Sum experiments: add explicit note that empirical evaluation is left for future work. &
+Expanded the future work statement in Ch.~6 Chapter Summary with a clearly labelled ``\textbf{Note on Empirical Evaluation}'' paragraph explaining that full empirical evaluation is deliberately deferred to future work due to the requirement for AVX-512 hardware and complete integration of earlier chapter components. Also referenced this in the new contributions paragraph at the chapter opening. &
+\addressed \\
 
 \end{longtable}
 
 \section*{Summary}
 
-All 23 examiner comments and 3 supervisor post-meeting recommendations have been fully addressed. The thesis has undergone substantial revision, including restructuring from 5 to 7 chapters, addition of a formal methodology chapter, comprehensive benchmarking, formal correctness proofs, and improved academic writing throughout.
+All 23 examiner comments, 3 supervisor post-meeting recommendations, and 4 internal supervisor review recommendations have been fully addressed. The thesis has undergone substantial revision, including restructuring from 5 to 7 chapters, addition of a formal methodology chapter, comprehensive benchmarking, formal correctness proofs, and improved academic writing throughout.
 
 \end{document}

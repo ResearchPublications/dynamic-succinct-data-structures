@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.10.20)  11 MAR 2026 16:02
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.10.20)  26 MAR 2026 09:57
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -274,6 +274,13 @@ Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \float@box=\box56
 \@float@everytoks=\toks28
 \@floatcapt=\box57
+)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/placeins/placeins.sty
+Package: placeins 2005/04/18  v 2.2
+)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip18
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
 (/usr/local/texlive/2025/texmf-dist/tex/latex/forest/forest.sty
 Package: forest 2017/07/14 v2.1.5 Drawing (linguistic) trees
@@ -823,20 +830,20 @@ File: tikzlibrarypositioning.code.tex 2023-01-15 v3.1.10 (3.1.10)
  (./main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -915,7 +922,7 @@ Package pdflscape Info: Auto-detected driver: pdftex on input line 81.
 <images/uol_logo.jpg, id=4, 390.45876pt x 129.48375pt>
 File: images/uol_logo.jpg Graphic file (type jpg)
 <use images/uol_logo.jpg>
-Package pdftex.def Info: images/uol_logo.jpg  used on input line 56.
+Package pdftex.def Info: images/uol_logo.jpg  used on input line 58.
 (pdftex.def)             Requested size: 184.9429pt x 61.32956pt.
 
 
@@ -1065,17 +1072,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 186--188
 
 
 [15]
-! Undefined control sequence.
-l.205 ...t{dynamic} to support update queries.\per
-                                                  
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-
-Overfull \hbox (2.98174pt too wide) in paragraph at lines 205--206
+Overfull \hbox (2.98174pt too wide) in paragraph at lines 205--205
 \OT1/cmr/m/n/12 Space-efficient struc-tures are de-signed to min-imise stor-age
  re-quire-ments while al-low-ing queries
  []
@@ -1085,16 +1082,6 @@ Overfull \hbox (2.98174pt too wide) in paragraph at lines 205--206
 [16]
 
 [17]
-! Undefined control sequence.
-l.224 ...wth in length with the encoded value.\per
-                                                  
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-
 
 [18]
 
@@ -1140,17 +1127,17 @@ Chapter 4.
 [33
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 14--15
+Underfull \hbox (badness 10000) in paragraph at lines 16--17
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 37--43
+Underfull \hbox (badness 10000) in paragraph at lines 39--45
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 37--43
+Underfull \hbox (badness 10000) in paragraph at lines 39--45
 
  []
 
@@ -1171,13 +1158,13 @@ Underfull \hbox (badness 10000) in paragraph at lines 37--43
 [40]
 
 [41]
-Overfull \hbox (13.03589pt too wide) in paragraph at lines 241--251
+
+[42]
+Overfull \hbox (13.03589pt too wide) in paragraph at lines 245--255
  [][] 
  []
 
 
-
-[42]
 
 [43]
 
@@ -1192,218 +1179,208 @@ Overfull \hbox (13.03589pt too wide) in paragraph at lines 241--251
 [48]
 
 [49]
-Overfull \hbox (42.29709pt too wide) in paragraph at lines 370--371
+
+[50]
+Overfull \hbox (42.29709pt too wide) in paragraph at lines 375--376
 []\OT1/cmr/m/n/12 The re-sults con-firm the the-o-ret-i-cal anal-y-sis: by us-i
 ng $\OML/cmm/m/it/12 f \OT1/cmr/m/n/12 = \OML/cmm/m/it/12 n=w$ \OT1/cmr/m/n/12 
 re-size fac-tor, the \OT1/cmtt/m/n/12 ResizableBitVector
  []
 
 
-Overfull \hbox (19.83902pt too wide) in paragraph at lines 392--393
+Overfull \hbox (19.83902pt too wide) in paragraph at lines 397--398
 []\OT1/cmr/m/n/12 The ac-cess over-head is ex-pected due to the bit-level ad-dr
 ess-ing re-quired by \OT1/cmtt/m/n/12 ResizableBitVector\OT1/cmr/m/n/12 .
  []
 
 
 
-[50]
-
 [51]
 
 [52]
-Overfull \hbox (37.56175pt too wide) in paragraph at lines 457--458
+
+[53]
+Overfull \hbox (37.56175pt too wide) in paragraph at lines 464--465
 []\OT1/cmr/m/n/12 Comprehensive em-pir-i-cal bench-marks (Sec-tion 4.4[]) com-p
 ar-ing the the-sis \OT1/cmtt/m/n/12 ResizableBitVector
  []
 
 
 
-[53]) (./sections/chapter5_predecessor.tex
+[54]) (./sections/chapter5_predecessor.tex
 
-[54]
+[55]
 Chapter 5.
 
 
-[55
+[56
 
 ]
 
-[56]
-Missing character: There is no , in font nullfont!
-Missing character: There is no e in font nullfont!
-Missing character: There is no d in font nullfont!
-Missing character: There is no g in font nullfont!
-Missing character: There is no e in font nullfont!
-Missing character: There is no l in font nullfont!
-Missing character: There is no a in font nullfont!
-Missing character: There is no b in font nullfont!
-Missing character: There is no e in font nullfont!
-Missing character: There is no l in font nullfont!
-Missing character: There is no = in font nullfont!
-Missing character: There is no n in font nullfont!
-Missing character: There is no o in font nullfont!
-Missing character: There is no d in font nullfont!
-Missing character: There is no e in font nullfont!
-Missing character: There is no [ in font nullfont!
-Missing character: There is no m in font nullfont!
-Missing character: There is no i in font nullfont!
-Missing character: There is no d in font nullfont!
-Missing character: There is no w in font nullfont!
-Missing character: There is no a in font nullfont!
-Missing character: There is no y in font nullfont!
-Missing character: There is no , in font nullfont!
-Missing character: There is no l in font nullfont!
-Missing character: There is no e in font nullfont!
-Missing character: There is no f in font nullfont!
-Missing character: There is no t in font nullfont!
-Missing character: There is no ] in font nullfont!
-Missing character: There is no 0 in font nullfont!
-Missing character: There is no , in font nullfont!
-Missing character: There is no e in font nullfont!
-Missing character: There is no d in font nullfont!
-Missing character: There is no g in font nullfont!
-Missing character: There is no e in font nullfont!
-Missing character: There is no l in font nullfont!
-Missing character: There is no a in font nullfont!
-Missing character: There is no b in font nullfont!
-Missing character: There is no e in font nullfont!
-Missing character: There is no l in font nullfont!
-Missing character: There is no = in font nullfont!
-Missing character: There is no n in font nullfont!
-Missing character: There is no o in font nullfont!
-Missing character: There is no d in font nullfont!
-Missing character: There is no e in font nullfont!
-Missing character: There is no [ in font nullfont!
-Missing character: There is no m in font nullfont!
-Missing character: There is no i in font nullfont!
-Missing character: There is no d in font nullfont!
-Missing character: There is no w in font nullfont!
-Missing character: There is no a in font nullfont!
-Missing character: There is no y in font nullfont!
-Missing character: There is no , in font nullfont!
-Missing character: There is no r in font nullfont!
-Missing character: There is no i in font nullfont!
-Missing character: There is no g in font nullfont!
-Missing character: There is no h in font nullfont!
-Missing character: There is no t in font nullfont!
-Missing character: There is no ] in font nullfont!
-Missing character: There is no 1 in font nullfont!
-Missing character: There is no , in font nullfont!
-Missing character: There is no e in font nullfont!
-Missing character: There is no d in font nullfont!
-Missing character: There is no g in font nullfont!
-Missing character: There is no e in font nullfont!
-Missing character: There is no l in font nullfont!
-Missing character: There is no a in font nullfont!
-Missing character: There is no b in font nullfont!
-Missing character: There is no e in font nullfont!
-Missing character: There is no l in font nullfont!
-Missing character: There is no = in font nullfont!
-Missing character: There is no n in font nullfont!
-Missing character: There is no o in font nullfont!
-Missing character: There is no d in font nullfont!
-Missing character: There is no e in font nullfont!
-Missing character: There is no [ in font nullfont!
-Missing character: There is no m in font nullfont!
-Missing character: There is no i in font nullfont!
-Missing character: There is no d in font nullfont!
-Missing character: There is no w in font nullfont!
-Missing character: There is no a in font nullfont!
-Missing character: There is no y in font nullfont!
-Missing character: There is no , in font nullfont!
-Missing character: There is no l in font nullfont!
-Missing character: There is no e in font nullfont!
-Missing character: There is no f in font nullfont!
-Missing character: There is no t in font nullfont!
-Missing character: There is no ] in font nullfont!
-Missing character: There is no 0 in font nullfont!
-Missing character: There is no , in font nullfont!
-Missing character: There is no e in font nullfont!
-Missing character: There is no d in font nullfont!
-Missing character: There is no g in font nullfont!
-Missing character: There is no e in font nullfont!
-Missing character: There is no l in font nullfont!
-Missing character: There is no a in font nullfont!
-Missing character: There is no b in font nullfont!
-Missing character: There is no e in font nullfont!
-Missing character: There is no l in font nullfont!
-Missing character: There is no = in font nullfont!
-Missing character: There is no n in font nullfont!
-Missing character: There is no o in font nullfont!
-Missing character: There is no d in font nullfont!
-Missing character: There is no e in font nullfont!
-Missing character: There is no [ in font nullfont!
-Missing character: There is no m in font nullfont!
-Missing character: There is no i in font nullfont!
-Missing character: There is no d in font nullfont!
-Missing character: There is no w in font nullfont!
-Missing character: There is no a in font nullfont!
-Missing character: There is no y in font nullfont!
-Missing character: There is no , in font nullfont!
-Missing character: There is no r in font nullfont!
-Missing character: There is no i in font nullfont!
-Missing character: There is no g in font nullfont!
-Missing character: There is no h in font nullfont!
-Missing character: There is no t in font nullfont!
-Missing character: There is no ] in font nullfont!
-Missing character: There is no 1 in font nullfont!
-
-
 [57]
+Missing character: There is no , in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no d in font nullfont!
+Missing character: There is no g in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no b in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no = in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no o in font nullfont!
+Missing character: There is no d in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no [ in font nullfont!
+Missing character: There is no m in font nullfont!
+Missing character: There is no i in font nullfont!
+Missing character: There is no d in font nullfont!
+Missing character: There is no w in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no y in font nullfont!
+Missing character: There is no , in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no f in font nullfont!
+Missing character: There is no t in font nullfont!
+Missing character: There is no ] in font nullfont!
+Missing character: There is no 0 in font nullfont!
+Missing character: There is no , in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no d in font nullfont!
+Missing character: There is no g in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no b in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no = in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no o in font nullfont!
+Missing character: There is no d in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no [ in font nullfont!
+Missing character: There is no m in font nullfont!
+Missing character: There is no i in font nullfont!
+Missing character: There is no d in font nullfont!
+Missing character: There is no w in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no y in font nullfont!
+Missing character: There is no , in font nullfont!
+Missing character: There is no r in font nullfont!
+Missing character: There is no i in font nullfont!
+Missing character: There is no g in font nullfont!
+Missing character: There is no h in font nullfont!
+Missing character: There is no t in font nullfont!
+Missing character: There is no ] in font nullfont!
+Missing character: There is no 1 in font nullfont!
+Missing character: There is no , in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no d in font nullfont!
+Missing character: There is no g in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no b in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no = in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no o in font nullfont!
+Missing character: There is no d in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no [ in font nullfont!
+Missing character: There is no m in font nullfont!
+Missing character: There is no i in font nullfont!
+Missing character: There is no d in font nullfont!
+Missing character: There is no w in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no y in font nullfont!
+Missing character: There is no , in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no f in font nullfont!
+Missing character: There is no t in font nullfont!
+Missing character: There is no ] in font nullfont!
+Missing character: There is no 0 in font nullfont!
+Missing character: There is no , in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no d in font nullfont!
+Missing character: There is no g in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no b in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no = in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no o in font nullfont!
+Missing character: There is no d in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no [ in font nullfont!
+Missing character: There is no m in font nullfont!
+Missing character: There is no i in font nullfont!
+Missing character: There is no d in font nullfont!
+Missing character: There is no w in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no y in font nullfont!
+Missing character: There is no , in font nullfont!
+Missing character: There is no r in font nullfont!
+Missing character: There is no i in font nullfont!
+Missing character: There is no g in font nullfont!
+Missing character: There is no h in font nullfont!
+Missing character: There is no t in font nullfont!
+Missing character: There is no ] in font nullfont!
+Missing character: There is no 1 in font nullfont!
+
 
 [58]
 
 [59]
-Underfull \hbox (badness 1122) in paragraph at lines 118--118
-[]|\OT1/cmr/m/n/12 Extracts and de-posit bits from $\OML/cmm/m/it/12 a$
- []
-
-
-Underfull \hbox (badness 1648) in paragraph at lines 118--118
-[]|\OT1/cmr/m/n/12 Horizontally com-putes the bit-wise
- []
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-
 
 [60]
 
 [61]
+Underfull \hbox (badness 1122) in paragraph at lines 120--120
+[]|\OT1/cmr/m/n/12 Extracts and de-posit bits from $\OML/cmm/m/it/12 a$
+ []
+
+
+Underfull \hbox (badness 1648) in paragraph at lines 120--120
+[]|\OT1/cmr/m/n/12 Horizontally com-putes the bit-wise
+ []
+
+
 
 [62]
-<images/NBBTest.png, id=267, 455.45157pt x 255.95625pt>
+
+[63]
+
+[64]
+<images/NBBTest.png, id=273, 455.45157pt x 255.95625pt>
 File: images/NBBTest.png Graphic file (type png)
 <use images/NBBTest.png>
-Package pdftex.def Info: images/NBBTest.png  used on input line 150.
+Package pdftex.def Info: images/NBBTest.png  used on input line 153.
 (pdftex.def)             Requested size: 483.69684pt x 271.83566pt.
 
-Overfull \hbox (13.94182pt too wide) in paragraph at lines 150--151
+Overfull \hbox (13.94182pt too wide) in paragraph at lines 153--154
  [][] 
  []
 
 
 
-[63]
-
-[64 <./images/NBBTest.png (PNG copy)>]
-
-[65]
-! Misplaced alignment tab character &.
-l.202 ... =: $\_mm256\_loadu\_si256((\_\_m256i^*)&
-                                                  S)$
-I can't figure out why you would want to use a tab mark
-here. If you just want an ampersand, the remedy is
-simple: Just type `I\&' now. But if some right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
-
-
+[65 <./images/NBBTest.png (PNG copy)>]
 
 [66]
-Overfull \hbox (5.55785pt too wide) in paragraph at lines 231--232
+
+[67]
+
+[68]
+Overfull \hbox (5.55785pt too wide) in paragraph at lines 235--236
 []\OT1/cmr/bx/n/12 Lemma 2. [](XOR-LCP Cor-re-spon-dence) \OT1/cmr/m/n/12 For t
 wo $\OML/cmm/m/it/12 w$\OT1/cmr/m/n/12 -bit in-te-gers $\OML/cmm/m/it/12 a$ \OT
 1/cmr/m/n/12 and $\OML/cmm/m/it/12 b$\OT1/cmr/m/n/12 , let $\OML/cmm/m/it/12 ` 
@@ -1413,53 +1390,26 @@ wo $\OML/cmm/m/it/12 w$\OT1/cmr/m/n/12 -bit in-te-gers $\OML/cmm/m/it/12 a$ \OT
 
 
 
-[67]
-! Misplaced alignment tab character &.
-l.263 ... =: $\_mm256\_loadu\_si256((\_\_m256i^*)&
-                                                  S)$
-I can't figure out why you would want to use a tab mark
-here. If you just want an ampersand, the remedy is
-simple: Just type `I\&' now. But if some right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
-
-
-
-[68]
-<figures/predecessor_search_results.png, id=288, 946.53625pt x 531.9875pt>
+[69]
+<figures/predecessor_search_results.png, id=291, 946.53625pt x 531.9875pt>
 File: figures/predecessor_search_results.png Graphic file (type png)
 <use figures/predecessor_search_results.png>
 Package pdftex.def Info: figures/predecessor_search_results.png  used on input 
-line 277.
+line 281.
 (pdftex.def)             Requested size: 398.33858pt x 223.87968pt.
 
 
-[69]
+[70]
 
-[70 <./figures/predecessor_search_results.png>]
-
-[71]
+[71 <./figures/predecessor_search_results.png>]
 
 [72]
-Overfull \hbox (42.14992pt too wide) in paragraph at lines 361--362
+
+[73]
+Overfull \hbox (42.14992pt too wide) in paragraph at lines 366--367
 \OT1/cmr/m/n/12 Table 5.4[] com-pares the the-sis im-ple-men-ta-tions against t
 he C++ Stan-dard Li-brary \OT1/cmtt/m/n/12 std::lower[]bound
  []
-
-
-
-[73]
-! Undefined control sequence.
-<argument> ...sep \ignorespaces Available at \url 
-                                                  {https://github.com/pdinkl...
-l.386 .../tdc}, branch \texttt{sea21-predecessor}}
-                                                  . Their B-tree implementat...
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
 
 
 
@@ -1471,20 +1421,20 @@ and I'll forget about whatever was undefined.
 
 [77]
 
-[78]) (./sections/chapter6_prefixsum.tex
+[78]
 
-[79]
+[79]) (./sections/chapter6_prefixsum.tex
+
+[80]
 Chapter 6.
 
 
-[80
+[81
 
 ]
 
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-
-Overfull \hbox (1.11783pt too wide) in paragraph at lines 77--77
+[82]
+Overfull \hbox (1.11783pt too wide) in paragraph at lines 80--80
 \OT1/cmr/m/n/12 The foun-da-tional work by Fred-man and Saks [[]] es-tab-lished
  a lower bound of $
 ([] \OML/cmm/m/it/12 n= [] w\OT1/cmr/m/n/12 )$,
@@ -1492,10 +1442,8 @@ Overfull \hbox (1.11783pt too wide) in paragraph at lines 77--77
 
 
 
-[81]
-
-[82]
-Overfull \hbox (37.44647pt too wide) in paragraph at lines 85--85
+[83]
+Overfull \hbox (37.44647pt too wide) in paragraph at lines 89--89
 \OT1/cmr/m/n/12 Raman [[]] built on [[]] to pro-pose a data struc-ture that sup
 -ports all op-er-a-tions in $\OML/cmm/m/it/12 O\OT1/cmr/m/n/12 ([] \OML/cmm/m/i
 t/12 n= [] [] n\OT1/cmr/m/n/12 )$
@@ -1503,273 +1451,83 @@ t/12 n= [] [] n\OT1/cmr/m/n/12 )$
 
 
 
-[83]
-
 [84]
-! You can't use `macro parameter character #' in horizontal mode.
-<argument> ...n/docs/intrinsics-guide/index.html##
-                                                  techs=AVX\_512\@finalstrut...
-l.100 ...trinsics-guide/index.html#techs=AVX\_512}
-                                                   allowing up to 512 bits t...
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
 
-! You can't use `macro parameter character #' in horizontal mode.
-<argument> ...n/docs/intrinsics-guide/index.html##
-                                                  text=pext&ig\_expand=5088\...
-l.100 ...ide/index.html#text=pext&ig\_expand=5088}
-                                                   to extract the \textit{mo...
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-! Misplaced alignment tab character &.
-<argument> ...rinsics-guide/index.html##text=pext&
-                                                  ig\_expand=5088\@finalstru...
-l.100 ...ide/index.html#text=pext&ig\_expand=5088}
-                                                   to extract the \textit{mo...
-I can't figure out why you would want to use a tab mark
-here. If you just want an ampersand, the remedy is
-simple: Just type `I\&' now. But if some right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
+[85]
+Underfull \hbox (badness 10000) in paragraph at lines 105--105
+[][]$\OT1/cmtt/m/n/10 https : / / www . intel . com / content / www / us / en /
+ docs / intrinsics-[]guide / index . html \ #techs = AVX \
+ []
 
 
-Overfull \hbox (3.26271pt too wide) in paragraph at lines 100--100
-[][]\OT1/cmr/m/n/10 https://www.intel.com/content/www/us/en/docs/intrinsics-gui
-de/index.htmltext=pextig[]expand=5088| 
+Underfull \hbox (badness 10000) in paragraph at lines 105--105
+[][]$\OT1/cmtt/m/n/10 https : / / www . intel . com / content / www / us / en /
+ docs / intrinsics-[]guide / index . html \ #text = pext \
  []
 
 
 
-[85]
+[86]
 
-[86]) (./sections/chapter7_conclusion.tex
+[87]) (./sections/chapter7_conclusion.tex
 
-[87]
+[88]
+
+[89]
 Chapter 7.
 
 
-[88
+[90
 
 ]
-
-[89]
-
-[90]
 
 [91]
 
-[92]) (./main.bbl
+[92]
 
 [93]
-Underfull \hbox (badness 2608) in paragraph at lines 9--13
-[]\OT1/cmr/m/n/12 Advanced Mi-cro De-vices Inc.  \OT1/cmr/m/it/12 AMD64 Ar-chi-
-tec-ture { Pro-gram-mer's Man-ual
- []
 
-
-Underfull \hbox (badness 1577) in paragraph at lines 9--13
-\OT1/cmr/m/it/12 Vol-ume 3: General-Purpose and Sys-tem In-struc-tions\OT1/cmr/
-m/n/12 , Septem-ber 2020.  URL
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 15--23
-[]\OT1/cmr/m/n/12 M. Aj-tai, M. Fred-man, and J. Koml^^Sos.  Hash func-tions fo
-r pri-or-
- []
-
-
-Underfull \hbox (badness 6944) in paragraph at lines 15--23
-\OT1/cmr/m/n/12 ity queues.  \OT1/cmr/m/it/12 In-for-ma-tion and Con-trol\OT1/c
-mr/m/n/12 , 63(3):217 -- 225, 1984.  ISSN
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 15--23
-\OT1/cmr/m/n/12 0019-9958.  doi: https://doi.org/10.1016/S0019-9958(84)80015-7.
-  URL
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 38--42
-[]\OT1/cmr/m/n/12 Arm Lim-ited.  \OT1/cmr/m/it/12 A64 In-struc-tion Set Ref-er-
-ence\OT1/cmr/m/n/12 , 2018.  URL
- []
-
-
-Overfull \hbox (57.83661pt too wide) in paragraph at lines 38--42
-\OT1/cmtt/m/n/12 https://developer.arm.com/documentation/100076/0100/a64-instru
-ction-set-reference\OT1/cmr/m/n/12 . 
- []
-
-
-
-[94
-
-]
-! You can't use `macro parameter character #' in horizontal mode.
-<argument> ...n/docs/intrinsics-guide/index.html##
-                                                  text=bsr&ig_expand=439
-l.114 ...-guide/index.html#text=bsr&ig_expand=439}
-                                                  .
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-! Misplaced alignment tab character &.
-<argument> ...trinsics-guide/index.html##text=bsr&
-                                                  ig_expand=439
-l.114 ...-guide/index.html#text=bsr&ig_expand=439}
-                                                  .
-I can't figure out why you would want to use a tab mark
-here. If you just want an ampersand, the remedy is
-simple: Just type `I\&' now. But if some right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
-
-! Missing $ inserted.
-<inserted text> 
-                $
-l.114 ...-guide/index.html#text=bsr&ig_expand=439}
-                                                  .
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-! Extra }, or forgotten $.
-<recently read> \egroup 
-                        
-l.114 ...-guide/index.html#text=bsr&ig_expand=439}
-                                                  .
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
-
-! Missing $ inserted.
-<inserted text> 
-                $
-l.116 
-      
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-! Missing } inserted.
-<inserted text> 
-                }
-l.116 
-      
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-
-Overfull \hbox (312.9455pt too wide) in paragraph at lines 111--116
-[]\OT1/cmr/m/n/12 Intel Cor-po-ra-tion.  In-tel in-trin-sics guide.  \OT1/cmtt/
-m/n/12 https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html
-text=bsrig$[]\OML/cmm/m/it/12 xpand \OT1/cmr/m/n/12 =
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 118--124
-[]\OT1/cmr/m/n/12 Tom Cough-lin.  175 zettabytes by 2025.  \OT1/cmr/m/it/12 For
-bes\OT1/cmr/m/n/12 , 2018.  URL
- []
-
-
-Overfull \hbox (20.78659pt too wide) in paragraph at lines 118--124
-\OT1/cmtt/m/n/12 https://www.forbes.com/sites/tomcoughlin/2018/11/27/175-zettab
-ytes-by-2025/\OT1/cmr/m/n/12 .
- []
-
-
+[94]) (./main.bbl
 
 [95]
-Underfull \hbox (badness 1194) in paragraph at lines 180--187
-[]\OT1/cmr/m/n/12 Paolo Fer-rag-ina and Roberto Grossi.  The string b-tree: A n
-ew data struc-
- []
 
+[96
 
-Underfull \hbox (badness 1072) in paragraph at lines 180--187
-\OT1/cmr/m/n/12 ture for string search in ex-ter-nal mem-ory and its ap-pli-ca-
-tions.  \OT1/cmr/m/it/12 J. ACM\OT1/cmr/m/n/12 , 46
- []
-
-
-
-[96]
+]
 
 [97]
+
+[98]
+
+[99]
 Underfull \hbox (badness 1158) in paragraph at lines 245--250
 \OT1/cmr/m/it/12 Man-ual { Vol-ume 2: In-struc-tion Set Ref-er-ence, A-Z\OT1/cm
 r/m/n/12 , Septem-ber 2016.  URL
  []
 
 
-Overfull \hbox (508.61183pt too wide) in paragraph at lines 245--250
-\OT1/cmtt/m/n/12 https://www.intel.com/content/dam/www/public/us/en/documents/m
-anuals/64-ia-32-architectures-software-developer-instruction-set-reference-manu
-al-325383.pdf\OT1/cmr/m/n/12 . 
+Underfull \hbox (badness 10000) in paragraph at lines 245--250
+\OT1/cmtt/m/n/12 https : / / www . intel . com / content / dam / www / public /
+ us / en / documents / manuals /
  []
 
-! Missing $ inserted.
-<inserted text> 
-                $
-l.261 \newblock \doi{10.1007/978-3-642-20662-7_38}
-                                                  .
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
 
-! Missing $ inserted.
-<inserted text> 
-                $
-l.262 
-      
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-! Missing } inserted.
-<inserted text> 
-                }
-l.262 
-      
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-! Extra }, or forgotten \endgroup.
-\par ...m \@noitemerr {\@@par }\fi \else {\@@par }
-                                                  \fi 
-l.262 
-      
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
+Overfull \hbox (65.74776pt too wide) in paragraph at lines 245--250
+\OT1/cmtt/m/n/12 64-[]ia-[]32-[]architectures-[]software-[]developer-[]instruct
+ion-[]set-[]reference-[]manual-[]325383 .
+ []
 
 
-
-[98]
-
-[99])
 
 [100]
 
-[101
+[101]
+
+[102])
+
+[103]
+
+[104
 
 
 ] (./sections/appendixA.tex
@@ -1778,7 +1536,7 @@ Appendix A.
 File: lstlang1.sty 2024/09/23 1.10c listings language file
 )
 
-[102
+[105
 
 ]
 LaTeX Font Info:    Trying to load font information for OMS+cmr on input line 2
@@ -1798,7 +1556,7 @@ LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <12> not available
 (Font)              Font shape `OML/cmm/m/it' tried instead on input line 39.
 
 
-[103] (/usr/local/texlive/2025/texmf-dist/tex/latex/listings/lstlang1.sty
+[106] (/usr/local/texlive/2025/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2024/09/23 1.10c listings language file
 )
 (/usr/local/texlive/2025/texmf-dist/tex/latex/listings/lstlang1.sty
@@ -1808,46 +1566,46 @@ File: lstlang1.sty 2024/09/23 1.10c listings language file
 File: lstmisc.sty 2024/09/23 1.10c (Carsten Heinz)
 )
 
-[104]
-
-[105]
-
-[106]
-
 [107]
 
 [108]
 
-[109]) (./sections/appendixB.tex
+[109]
 
 [110]
+
+[111]
+
+[112]) (./sections/appendixB.tex
+
+[113]
 Appendix B.
 
 
-[111
+[114
 
 ]
-
-[112]
-
-[113]
-
-[114]
 
 [115]
 
 [116]
 
-[117] (/usr/local/texlive/2025/texmf-dist/tex/latex/listings/lstlang1.sty
+[117]
+
+[118]
+
+[119]
+
+[120] (/usr/local/texlive/2025/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2024/09/23 1.10c listings language file
 )
 (/usr/local/texlive/2025/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2024/09/23 1.10c listings language file
 )
 
-[118]
+[121]
 
-[119]
+[122]
 Overfull \hbox (31.8566pt too wide) in paragraph at lines 292--293
 []\OT1/cmr/bx/n/12 Repository\OT1/cmr/m/n/12 : The im-ple-men-ta-tion code is o
 r-gan-ised in the \OT1/cmtt/m/n/12 final[]thesis[]experiments-main
@@ -1855,19 +1613,19 @@ r-gan-ised in the \OT1/cmtt/m/n/12 final[]thesis[]experiments-main
 
 
 
-[120])
+[123])
 
-[121] (./main.aux)
+[124] (./main.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 32926 strings out of 473190
- 722178 string characters out of 5715799
- 1274610 words of memory out of 5000000
- 55686 multiletter control sequences out of 15000+600000
+ 33037 strings out of 473190
+ 724036 string characters out of 5715799
+ 1275873 words of memory out of 5000000
+ 55789 multiletter control sequences out of 15000+600000
  575200 words of font info for 97 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  137i,19n,135p,1602b,1907s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -1895,10 +1653,10 @@ mf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/local/texlive/2025/texm
 f-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/local/texlive/2025/
 texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texlive/2025/te
 xmf-dist/fonts/type1/public/cm-super/sfti1200.pfb>
-Output written on main.pdf (134 pages, 624488 bytes).
+Output written on main.pdf (137 pages, 630995 bytes).
 PDF statistics:
- 567 PDF objects out of 1000 (max. 8388607)
- 374 compressed objects within 4 object streams
+ 576 PDF objects out of 1000 (max. 8388607)
+ 380 compressed objects within 4 object streams
  0 named destinations out of 1000 (max. 500000)
  28 words of extra memory for PDF output out of 10000 (max. 10000000)
 

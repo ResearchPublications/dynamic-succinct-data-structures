@@ -2,6 +2,8 @@
 \label{chap:predecessor}
 
 In this chapter, the problem of predecessor search in small sets is addressed. This problem was previously perceived to be impractical due to the lack of hardware to support some of the theoretical claims. Using SIMD instructions, a practical and efficient implementation of constant time predecessor search in integer sets is provided, leveraging Single-Instruction-Multiple-Data (SIMD) instructions. Experimental evaluations demonstrate that these data structures can be implemented and are useful in applications such as B-Trees and super-scalar search and sorting.
+
+The novel contributions of this chapter are: (i) a practical implementation of Ajtai's constant-time predecessor search using pre-computed lookup tables with SIMD instructions --- to the best of available knowledge, the first such practical implementation; (ii) an improved variant of Fredman's method that exploits XOR-minimisation to maximise the longest common prefix, yielding faster query times with no additional memory overhead; (iii) an analysis of significant bit positions across synthetic and real-world datasets; and (iv) comprehensive empirical comparisons demonstrating 3.5--5.2$\times$ speedups over linear search for small static sets.
 \section{Introduction}
 \label{sec:Introduction}
 Predecessor search is amongst the most fundamental algorithmic problem in computer science \cite{Degermark_1997}. An important sub-case is that of searching a small static set of integer keys.  On the word RAM with word size $w$ bits, ``small'' is usually taken to mean $w^{O(1)}$.  A number of papers have explored this problem \cite{AJTAI1984217,FREDMAN1993424, Patrascu_2014} and have proposed $O(1)$-time and linear-space solutions to this problem, improving upon comparison-based approaches that would take time logarithmic in the number of keys ($O(\log w)$ time in this case). These solutions are either described in the \emph{cell probe} model \cite{AJTAI1984217}, where the algorithm is only charged for the reads and writes it makes to memory (and can compute arbitrary functions on data in registers for free), or make complicated, and ingenious, \textit{bit-parallel} tricks to simulate SIMD operation on several items packed into $w$-bit words. Their complexity has hitherto led to these algorithms being viewed as impractical.\par
@@ -65,7 +67,7 @@ Given a set of sorted $w$-bits integers $S$ of length $k$, computing the $lcp$ b
 consecutive adjacent elements in $S$ gives all the significant bit positions in $S$.
 \end{lemma}\par
 \textit{Proof:}
-Two adjacent integers $(x, y) \in S$ shares the longest common bits compared to any other combination of $(x, z) \in S$, which makes the lemma to hold trivially. If $(x, z)$ has an $lcp$ greater than $(x, y)$, then $z < y$, and that violates the sorting order of $S$.\par
+Two adjacent integers $(x, y) \in S$ share the longest common bits compared to any other combination of $(x, z) \in S$, which makes the lemma to hold trivially. If $(x, z)$ has an $lcp$ greater than $(x, y)$, then $z < y$, and that violates the sorting order of $S$.\par
 \textbf{Example 1.}
 \begin{itemize}
     \item Let $S = \{ 7, 85, 102, 200, 205, 232 \}$
@@ -122,12 +124,13 @@ Fredman \cite{FREDMAN1993424} improved on the above by introducing $rank$ on a s
 \par
 Bit-manipulations have increasingly become important to fast data structures, with most approaches relying on some clever \textit{bit-hacks} and programming tricks~\cite{hilewitz_2008}. Both algorithms considered in this chapter are heavily reliant on bit-wise manipulation to perform their operations. This makes their approach complex and challenging. The Bit Manipulation Instructions (BMI) that are an extension of the x86 instruction set architecture and operate on general purpose registers are exploited. The instructions used can be largely grouped into the following categories:
 \begin{itemize}
-    \item \textit{Load and store}: this group of instructions load and copy data from continuous chunk of memory into a SIMD register. When the data to be read is from a non-continuous memory locations, this slows down these operations as you will need a separate $read$ operation for each location.
+    \item \textit{Load and store}: this group of instructions loads and copies data from a continuous chunk of memory into a SIMD register. When the data to be read is from non-continuous memory locations, this slows down these operations as a separate $read$ operation will be needed for each location.
     \item \textit{Element-wise}: this group of instructions performs an operation on a specific data element within a single or multiple SIMD registers. These could include $shifting$ and $access$.
-    \item \textit{Horizontal-wise}: these sets of instructions act across the elements of a SIMD register. It allows for operations to be performed on values store within a register. For example, adding or multiplying two values within the same register and permutation of values within a register.
-    \item \textit{Advanced BMIs}: these are bit manipulation instructions implemented as single instructions in $intel$ processors that were considered expensive before. These includes $PDEP$, and $PEXT$.
+    \item \textit{Horizontal-wise}: these sets of instructions act across the elements of a SIMD register. It allows for operations to be performed on values stored within a register. For example, adding or multiplying two values within the same register and permutation of values within a register.
+    \item \textit{Advanced BMIs}: these are bit manipulation instructions implemented as single instructions in $intel$ processors that were considered expensive before. These include $PDEP$ and $PEXT$.
 \end{itemize}
 
+\FloatBarrier
 \section{Computing Significant Bit Positions} \label{branchingbits}
 An experiment to compute the number of branching positions in various synthetic data sets is presented. The first dataset is aimed at generating the worst case number of significant bit positions, the second dataset generates uniformly distributed random numbers using the C++ STL random number generator\footnote{https://en.cppreference.com/w/cpp/numeric/random}, the third dataset is based on the sizes of B-tree nodes, and the last dataset is based on the B-tree splitter keys.\par
 \textbf{Worst Case:} A potential worst-case input scenario that could generate the maximum possible significant bit positions is shown. To generate $k$ integers, a sequence $S$ of length $k$ is generated as powers of $2$ by setting $S[i] = 2^i$ for $0 < i < k$.
@@ -168,6 +171,7 @@ Maximum       & 3  & 7  & 11 & 12 & 14 & 14 & 15 & 16 & 19 & 19 \\ \hline
 \end{table}
 \par
 From Table~\ref{table:reducingnbb}, some improvements in the number of significant bit positions at certain shift values can be seen, which can reduce space usage of Ajtai~\cite{AJTAI1984217} lookup tables. This is intended to be explored further as part of future work. Questions such as the following are intended to be answered: \textit{what value of $i$ should $S$ be shifted by to reduce the number of significant bit positions below the baseline?}
+\FloatBarrier
 \section{Implementations Using Built-in Instructions} \label{experiments}
 In this section, the implementation of two data structures that support fast predecessor search on small sets of integers $S$ is described. Their potential strengths and weaknesses are also discussed, and some improvements that potentially speed up their execution time in practice are proposed.\par
 \subsection{Ajtai's Method}
@@ -187,7 +191,7 @@ To support the blind search of key $x$ in constant time, a pre-computed lookup t
         \end{algorithm}
     \end{minipage}%
 \end{table}
-The predecessor of $x$ can be trivially computed by returning $S[rank(x, S)]$, and the successor of $x$ as $S[rank(x, S) + 1]$. All operations are supported in constant time. The major drawback to this apparoach is the extra space incurred of $O(2^b)$, which is largely dependent on the number of significant bit positions.
+The predecessor of $x$ can be trivially computed by returning $S[rank(x, S)]$, and the successor of $x$ as $S[rank(x, S) + 1]$. All operations are supported in constant time. The major drawback to this approach is the extra space incurred of $O(2^b)$, which is largely dependent on the number of significant bit positions.
 \par
 \subsection{Fredman's Method} 
 To support rank on $w$ as proposed by \cite{FREDMAN1993424}, an AVX $256$-bit register that supports up to $4w$-bits is used. It is possible to find the $rank(\hat{S}, \hat{x})$ in constant time using some carefully written instructions described below. $\hat{x}$ is broadcast into $256$-bit register $a$, then $\hat{S}$ is read into another $256$-bit register $b$. Since AVX does not support \textit{greater-or-equal} comparison, the \textit{maximum} is computed horizontally between $a$ and $b$ and then compared for equality between the result and $b$. 
@@ -199,7 +203,7 @@ To support rank on $w$ as proposed by \cite{FREDMAN1993424}, an AVX $256$-bit re
             \caption{rankFW(S, x)}
             \begin{algorithmic}[1]
                 \STATE a =: $\_mm256\_set1\_epi16(x)$
-                \STATE b =: $\_mm256\_loadu\_si256((\_\_m256i^*)&S)$
+                \STATE b =: $\_mm256\_loadu\_si256((\_\_m256i^*)\&S)$
                 \STATE c =: $\_mm256\_cmpeq\_epi16(\_mm256\_max\_epu16(b, a), b)$
                 \STATE d = $\_m256mm\_movemask\_epi16(c)$
                 \STATE i = $\_mm\_tzcnt\_64(d)$
@@ -210,7 +214,7 @@ To support rank on $w$ as proposed by \cite{FREDMAN1993424}, an AVX $256$-bit re
         \end{algorithm}
     \end{minipage}%
 \end{table}
-The predecessor and successor of $x$ can now be computed as done in Ajtai's method. All operations are supported in constant time as well. This is better than \cite{AJTAI1984217} in space usage as it does not need the extract space of lookup table $AT$.  The major drawback to this is the number of operations needed to compute the $rank$. It apparently becomes slower than Ajtai's method.\par
+The predecessor and successor of $x$ can now be computed as done in Ajtai's method. All operations are supported in constant time as well. This is better than \cite{AJTAI1984217} in space usage as it does not need the extra space of lookup table $AT$.  The major drawback to this is the number of operations needed to compute the $rank$. It apparently becomes slower than Ajtai's method.\par
 \subsection{Improved Fredman}
 \label{improved-fredman}
 A speed-up of Fredman's~\cite{FREDMAN1993424} $rank$ operation is proposed. Since the first part of the search procedure in~\cite{FREDMAN1993424} attempts to find the element in $\hat{S}$ with the longest common prefix with $\hat{x}$, a new approach is described as follows:
@@ -260,7 +264,7 @@ Each step preserves the mathematical relationship established in the theorem, en
             \caption{rankFWImproved(S, x)}
             \begin{algorithmic}[1]
                 \STATE a =: $\_mm256\_set1\_epi16(x)$
-                \STATE b =: $\_mm256\_loadu\_si256((\_\_m256i^*)&S)$
+                \STATE b =: $\_mm256\_loadu\_si256((\_\_m256i^*)\&S)$
                 \STATE c =: $\_mm256\_xor\_si256(a, b)$
                 \STATE d =: $\_mm256\_minpos\_epu16(c)$
                 \STATE i =: $\_mm256\_extract\_epi16(d)$
@@ -280,6 +284,7 @@ The aforementioned data structures were implemented using C++ and various tests 
 \end{figure}
 From Figure \ref{fig:rankspeedtest}, Ajtai method proves to be the fastest, though having the highest memory foot-print. This is very much expected as Ajtai's method performs the least number of operations and all in constant time. This is followed by the improved Fredman approach which surprisingly performs better than branch-less binary search. The direct implementation of Fredman \cite{FREDMAN1993424} is the slowest, will be due to the possible branch-misprediction that happens when choosing the element with the longest common prefix (between $S_i$ and $S_{i+1}$). \par
 
+\FloatBarrier
 \section{Comparison with Dinklage et al.}
 \label{sec:dinklage-comparison}
 
@@ -408,6 +413,7 @@ The empirical results confirm the theoretical analysis: for small static sets ($
 
 It should be noted that Dinklage et al.'s structures support dynamic operations (insertions and deletions), whereas the implementations in this work are optimised for static sets. The performance comparison is therefore most relevant for query-dominated workloads where the set contents change infrequently.
 
+\FloatBarrier
 \section{Comparison with Classic Predecessor Structures}
 \label{sec:classic-comparison}
 
@@ -481,6 +487,7 @@ STL lower\_bound & 4$\times$ Ajtai & $O(1)$ & Baseline comparison \\
 
 \textbf{Recommendation}: For most applications, the improved Fredman method (Section~\ref{improved-fredman}) is recommended as it achieves near-optimal query time with minimal space overhead. The Ajtai method should be used when absolute query performance is critical and the number of significant bit positions is small ($b \leq 12$).
 
+\FloatBarrier
 \section{Chapter Summary}
 This chapter addressed the problem of fast predecessor search in small static integer sets. The following contributions were presented:
 

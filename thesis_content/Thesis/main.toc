@@ -47,108 +47,108 @@
 \contentsline {section}{\numberline {3.7}Ethical Considerations}{31}{}%
 \contentsline {section}{\numberline {3.8}Chapter Summary}{31}{}%
 \contentsline {chapter}{\numberline {4}Extensible Array Representation}{33}{}%
-\contentsline {section}{\numberline {4.1}Extensible Array}{33}{}%
+\contentsline {section}{\numberline {4.1}Extensible Array}{34}{}%
 \contentsline {subsection}{\numberline {4.1.1}Vector EA}{34}{}%
-\contentsline {subsubsection}{Correctness of GROW Operation}{34}{}%
-\contentsline {subsection}{\numberline {4.1.2}Simple EA}{35}{}%
+\contentsline {subsubsection}{Correctness of GROW Operation}{35}{}%
+\contentsline {subsection}{\numberline {4.1.2}Simple EA}{36}{}%
 \contentsline {subsection}{\numberline {4.1.3}Brodnik et al EA}{36}{}%
 \contentsline {subsection}{\numberline {4.1.4}Collection of Extensible Arrays}{37}{}%
 \contentsline {section}{\numberline {4.2}Proposed Data Structure}{38}{}%
 \contentsline {section}{\numberline {4.3}Dynamic Data Structures}{41}{}%
-\contentsline {subsection}{\numberline {4.3.1}ITLB Analysis in Dynamic Context}{41}{}%
-\contentsline {subsubsection}{Space Decomposition}{41}{}%
+\contentsline {subsection}{\numberline {4.3.1}ITLB Analysis in Dynamic Context}{42}{}%
+\contentsline {subsubsection}{Space Decomposition}{42}{}%
 \contentsline {subsubsection}{Dynamic Elias-Fano Space Analysis}{42}{}%
-\contentsline {subsubsection}{Total Space Bound}{42}{}%
+\contentsline {subsubsection}{Total Space Bound}{43}{}%
 \contentsline {subsubsection}{Growth Factor Trade-Off}{43}{}%
-\contentsline {subsubsection}{Succinctness in the Dynamic Setting}{43}{}%
-\contentsline {subsubsection}{Practical Implications}{43}{}%
+\contentsline {subsubsection}{Succinctness in the Dynamic Setting}{44}{}%
+\contentsline {subsubsection}{Practical Implications}{44}{}%
 \contentsline {subsection}{\numberline {4.3.2}Append-Only Bitvector}{44}{}%
 \contentsline {subsubsection}{Bitvector Layout}{45}{}%
-\contentsline {subsubsection}{Operations}{45}{}%
-\contentsline {subsection}{\numberline {4.3.3}Elias-Fano}{46}{}%
+\contentsline {subsubsection}{Operations}{46}{}%
+\contentsline {subsection}{\numberline {4.3.3}Elias-Fano}{47}{}%
 \contentsline {subsubsection}{An Example}{47}{}%
-\contentsline {subsubsection}{Extensible Elias-Fano with \textit {Append-Only}}{47}{}%
+\contentsline {subsubsection}{Extensible Elias-Fano with \textit {Append-Only}}{48}{}%
 \contentsline {section}{\numberline {4.4}Experiments}{49}{}%
 \contentsline {subsection}{\numberline {4.4.1}Experimental Setup}{49}{}%
-\contentsline {subsection}{\numberline {4.4.2}Append Performance Comparison}{49}{}%
+\contentsline {subsection}{\numberline {4.4.2}Append Performance Comparison}{50}{}%
 \contentsline {subsection}{\numberline {4.4.3}Space Efficiency Comparison}{50}{}%
-\contentsline {subsection}{\numberline {4.4.4}Access Performance}{50}{}%
-\contentsline {section}{\numberline {4.5}Applications of Extensible Arrays}{51}{}%
-\contentsline {subsection}{\numberline {4.5.1}Inverted Index Compression}{51}{}%
-\contentsline {subsection}{\numberline {4.5.2}Dynamic Bitvectors in Succinct Data Structures}{51}{}%
-\contentsline {subsection}{\numberline {4.5.3}Streaming Data Applications}{52}{}%
-\contentsline {subsection}{\numberline {4.5.4}Analysis}{52}{}%
-\contentsline {section}{\numberline {4.6}Chapter Summary}{53}{}%
-\contentsline {chapter}{\numberline {5}Fast Predecessor Search in Small Set}{55}{}%
-\contentsline {section}{\numberline {5.1}Introduction}{55}{}%
-\contentsline {section}{\numberline {5.2}Preliminaries}{56}{}%
-\contentsline {subsection}{\numberline {5.2.1}Advanced Bit Manipulation Instructions}{57}{}%
-\contentsline {subsection}{\numberline {5.2.2}Blind Search}{57}{}%
-\contentsline {subsection}{\numberline {5.2.3}Significant Bit Positions}{58}{}%
-\contentsline {subsection}{\numberline {5.2.4}Compressed Keys}{59}{}%
-\contentsline {subsection}{\numberline {5.2.5}Ajtai's Method}{59}{}%
-\contentsline {subsection}{\numberline {5.2.6}Fredman's Method}{60}{}%
-\contentsline {subsection}{\numberline {5.2.7}SIMD and Builtin Instructions}{60}{}%
-\contentsline {section}{\numberline {5.3}Computing Significant Bit Positions}{62}{}%
-\contentsline {subsection}{\numberline {5.3.1}Random Datasets}{63}{}%
-\contentsline {subsection}{\numberline {5.3.2}B-Tree Sub-Tree Size Datasets}{63}{}%
-\contentsline {subsection}{\numberline {5.3.3}B-Tree Splitter Keys Datasets}{63}{}%
-\contentsline {section}{\numberline {5.4}Optimisations}{64}{}%
-\contentsline {section}{\numberline {5.5}Implementations Using Built-in Instructions}{65}{}%
-\contentsline {subsection}{\numberline {5.5.1}Ajtai's Method}{65}{}%
-\contentsline {subsection}{\numberline {5.5.2}Fredman's Method}{66}{}%
-\contentsline {subsection}{\numberline {5.5.3}Improved Fredman}{67}{}%
-\contentsline {subsubsection}{Correctness of XOR-MinPos Method}{67}{}%
-\contentsline {subsection}{\numberline {5.5.4}Experiments}{69}{}%
-\contentsline {section}{\numberline {5.6}Comparison with Dinklage et al.}{70}{}%
-\contentsline {subsection}{\numberline {5.6.1}Overview of Dinklage's Approach}{71}{}%
-\contentsline {subsection}{\numberline {5.6.2}Methodological Comparison}{71}{}%
-\contentsline {subsection}{\numberline {5.6.3}Key Differences}{72}{}%
-\contentsline {subsubsection}{Static vs Dynamic}{72}{}%
-\contentsline {subsubsection}{Set Size Constraints}{72}{}%
-\contentsline {subsubsection}{Application Context}{72}{}%
-\contentsline {subsection}{\numberline {5.6.4}Complementary Techniques}{73}{}%
-\contentsline {subsection}{\numberline {5.6.5}Empirical Performance Comparison}{73}{}%
-\contentsline {subsubsection}{Comparison with STL Baseline}{73}{}%
-\contentsline {subsubsection}{Comparison with Dinklage et al.}{74}{}%
-\contentsline {section}{\numberline {5.7}Comparison with Classic Predecessor Structures}{75}{}%
-\contentsline {subsection}{\numberline {5.7.1}Theoretical Comparison}{75}{}%
-\contentsline {subsection}{\numberline {5.7.2}Analysis}{76}{}%
-\contentsline {subsection}{\numberline {5.7.3}Space-Time Trade-Off Analysis}{77}{}%
-\contentsline {section}{\numberline {5.8}Chapter Summary}{77}{}%
-\contentsline {chapter}{\numberline {6}Dynamic Searchable Prefix Sum}{80}{}%
-\contentsline {section}{\numberline {6.1}Preliminaries}{80}{}%
-\contentsline {section}{\numberline {6.2}Related Work}{81}{}%
-\contentsline {section}{\numberline {6.3}Searchable Prefix Sum}{83}{}%
-\contentsline {section}{\numberline {6.4}Dynamic Searchable Prefix Sum}{84}{}%
-\contentsline {section}{\numberline {6.5}Operations}{85}{}%
-\contentsline {section}{\numberline {6.6}Optimisations}{86}{}%
-\contentsline {section}{\numberline {6.7}Chapter Summary}{86}{}%
-\contentsline {chapter}{\numberline {7}Conclusions and Future Work}{88}{}%
-\contentsline {section}{\numberline {7.1}Summary of Contributions}{88}{}%
-\contentsline {subsection}{\numberline {7.1.1}Extensible Array Representation (Chapter~\ref {chap:extensible})}{88}{}%
-\contentsline {subsection}{\numberline {7.1.2}Fast Predecessor Search in Small Sets (Chapter~\ref {chap:predecessor})}{89}{}%
-\contentsline {subsection}{\numberline {7.1.3}Dynamic Searchable Prefix Sum (Chapter~\ref {chap:prefixsum})}{89}{}%
-\contentsline {section}{\numberline {7.2}Reflective Analysis of the Research Process}{90}{}%
-\contentsline {section}{\numberline {7.3}Limitations}{91}{}%
-\contentsline {section}{\numberline {7.4}Future Research Directions}{91}{}%
-\contentsline {subsection}{\numberline {7.4.1}Short-Term Extensions}{91}{}%
-\contentsline {subsection}{\numberline {7.4.2}Medium-Term Research}{92}{}%
-\contentsline {subsection}{\numberline {7.4.3}Long-Term Vision}{92}{}%
-\contentsline {section}{\numberline {7.5}Concluding Remarks}{93}{}%
-\contentsline {chapter}{References}{93}{}%
-\contentsline {chapter}{Appendices}{101}{}%
-\contentsline {chapter}{\numberline {A}Implementation Code Samples}{102}{}%
-\contentsline {section}{\numberline {A.1}ResizableBitVector Implementation}{102}{}%
-\contentsline {section}{\numberline {A.2}SIMD Predecessor Search Implementation}{104}{}%
-\contentsline {section}{\numberline {A.3}Ajtai Method with Lookup Tables}{106}{}%
-\contentsline {section}{\numberline {A.4}Dynamic Prefix Sum Operations}{108}{}%
-\contentsline {chapter}{\numberline {B}Benchmark Code and Project Statistics}{111}{}%
-\contentsline {section}{\numberline {B.1}Project Statistics}{111}{}%
-\contentsline {section}{\numberline {B.2}Extensible Array Benchmark}{113}{}%
-\contentsline {section}{\numberline {B.3}Predecessor Search Benchmark}{116}{}%
-\contentsline {section}{\numberline {B.4}Build and Run Instructions}{118}{}%
-\contentsline {subsection}{\numberline {B.4.1}Chapter 4: Elias-Fano (Java/Maven)}{118}{}%
-\contentsline {subsection}{\numberline {B.4.2}Chapter 5: Fast Predecessor Search (C++)}{119}{}%
-\contentsline {section}{\numberline {B.5}Computing Environment}{120}{}%
-\contentsline {section}{\numberline {B.6}Data Availability}{120}{}%
+\contentsline {subsection}{\numberline {4.4.4}Access Performance}{51}{}%
+\contentsline {section}{\numberline {4.5}Applications of Extensible Arrays}{52}{}%
+\contentsline {subsection}{\numberline {4.5.1}Inverted Index Compression}{52}{}%
+\contentsline {subsection}{\numberline {4.5.2}Dynamic Bitvectors in Succinct Data Structures}{52}{}%
+\contentsline {subsection}{\numberline {4.5.3}Streaming Data Applications}{53}{}%
+\contentsline {subsection}{\numberline {4.5.4}Analysis}{53}{}%
+\contentsline {section}{\numberline {4.6}Chapter Summary}{54}{}%
+\contentsline {chapter}{\numberline {5}Fast Predecessor Search in Small Set}{56}{}%
+\contentsline {section}{\numberline {5.1}Introduction}{57}{}%
+\contentsline {section}{\numberline {5.2}Preliminaries}{58}{}%
+\contentsline {subsection}{\numberline {5.2.1}Advanced Bit Manipulation Instructions}{58}{}%
+\contentsline {subsection}{\numberline {5.2.2}Blind Search}{59}{}%
+\contentsline {subsection}{\numberline {5.2.3}Significant Bit Positions}{59}{}%
+\contentsline {subsection}{\numberline {5.2.4}Compressed Keys}{60}{}%
+\contentsline {subsection}{\numberline {5.2.5}Ajtai's Method}{61}{}%
+\contentsline {subsection}{\numberline {5.2.6}Fredman's Method}{61}{}%
+\contentsline {subsection}{\numberline {5.2.7}SIMD and Builtin Instructions}{62}{}%
+\contentsline {section}{\numberline {5.3}Computing Significant Bit Positions}{63}{}%
+\contentsline {subsection}{\numberline {5.3.1}Random Datasets}{64}{}%
+\contentsline {subsection}{\numberline {5.3.2}B-Tree Sub-Tree Size Datasets}{64}{}%
+\contentsline {subsection}{\numberline {5.3.3}B-Tree Splitter Keys Datasets}{65}{}%
+\contentsline {section}{\numberline {5.4}Optimisations}{65}{}%
+\contentsline {section}{\numberline {5.5}Implementations Using Built-in Instructions}{66}{}%
+\contentsline {subsection}{\numberline {5.5.1}Ajtai's Method}{67}{}%
+\contentsline {subsection}{\numberline {5.5.2}Fredman's Method}{67}{}%
+\contentsline {subsection}{\numberline {5.5.3}Improved Fredman}{68}{}%
+\contentsline {subsubsection}{Correctness of XOR-MinPos Method}{69}{}%
+\contentsline {subsection}{\numberline {5.5.4}Experiments}{70}{}%
+\contentsline {section}{\numberline {5.6}Comparison with Dinklage et al.}{71}{}%
+\contentsline {subsection}{\numberline {5.6.1}Overview of Dinklage's Approach}{72}{}%
+\contentsline {subsection}{\numberline {5.6.2}Methodological Comparison}{72}{}%
+\contentsline {subsection}{\numberline {5.6.3}Key Differences}{73}{}%
+\contentsline {subsubsection}{Static vs Dynamic}{73}{}%
+\contentsline {subsubsection}{Set Size Constraints}{73}{}%
+\contentsline {subsubsection}{Application Context}{73}{}%
+\contentsline {subsection}{\numberline {5.6.4}Complementary Techniques}{74}{}%
+\contentsline {subsection}{\numberline {5.6.5}Empirical Performance Comparison}{74}{}%
+\contentsline {subsubsection}{Comparison with STL Baseline}{74}{}%
+\contentsline {subsubsection}{Comparison with Dinklage et al.}{75}{}%
+\contentsline {section}{\numberline {5.7}Comparison with Classic Predecessor Structures}{76}{}%
+\contentsline {subsection}{\numberline {5.7.1}Theoretical Comparison}{76}{}%
+\contentsline {subsection}{\numberline {5.7.2}Analysis}{77}{}%
+\contentsline {subsection}{\numberline {5.7.3}Space-Time Trade-Off Analysis}{78}{}%
+\contentsline {section}{\numberline {5.8}Chapter Summary}{78}{}%
+\contentsline {chapter}{\numberline {6}Dynamic Searchable Prefix Sum}{81}{}%
+\contentsline {section}{\numberline {6.1}Preliminaries}{82}{}%
+\contentsline {section}{\numberline {6.2}Related Work}{83}{}%
+\contentsline {section}{\numberline {6.3}Searchable Prefix Sum}{84}{}%
+\contentsline {section}{\numberline {6.4}Dynamic Searchable Prefix Sum}{85}{}%
+\contentsline {section}{\numberline {6.5}Operations}{87}{}%
+\contentsline {section}{\numberline {6.6}Optimisations}{87}{}%
+\contentsline {section}{\numberline {6.7}Chapter Summary}{88}{}%
+\contentsline {chapter}{\numberline {7}Conclusions and Future Work}{90}{}%
+\contentsline {section}{\numberline {7.1}Summary of Contributions}{90}{}%
+\contentsline {subsection}{\numberline {7.1.1}Extensible Array Representation (Chapter~\ref {chap:extensible})}{90}{}%
+\contentsline {subsection}{\numberline {7.1.2}Fast Predecessor Search in Small Sets (Chapter~\ref {chap:predecessor})}{91}{}%
+\contentsline {subsection}{\numberline {7.1.3}Dynamic Searchable Prefix Sum (Chapter~\ref {chap:prefixsum})}{91}{}%
+\contentsline {section}{\numberline {7.2}Reflective Analysis of the Research Process}{92}{}%
+\contentsline {section}{\numberline {7.3}Limitations}{93}{}%
+\contentsline {section}{\numberline {7.4}Future Research Directions}{93}{}%
+\contentsline {subsection}{\numberline {7.4.1}Short-Term Extensions}{93}{}%
+\contentsline {subsection}{\numberline {7.4.2}Medium-Term Research}{94}{}%
+\contentsline {subsection}{\numberline {7.4.3}Long-Term Vision}{94}{}%
+\contentsline {section}{\numberline {7.5}Concluding Remarks}{95}{}%
+\contentsline {chapter}{References}{95}{}%
+\contentsline {chapter}{Appendices}{104}{}%
+\contentsline {chapter}{\numberline {A}Implementation Code Samples}{105}{}%
+\contentsline {section}{\numberline {A.1}ResizableBitVector Implementation}{105}{}%
+\contentsline {section}{\numberline {A.2}SIMD Predecessor Search Implementation}{107}{}%
+\contentsline {section}{\numberline {A.3}Ajtai Method with Lookup Tables}{109}{}%
+\contentsline {section}{\numberline {A.4}Dynamic Prefix Sum Operations}{111}{}%
+\contentsline {chapter}{\numberline {B}Benchmark Code and Project Statistics}{114}{}%
+\contentsline {section}{\numberline {B.1}Project Statistics}{114}{}%
+\contentsline {section}{\numberline {B.2}Extensible Array Benchmark}{116}{}%
+\contentsline {section}{\numberline {B.3}Predecessor Search Benchmark}{119}{}%
+\contentsline {section}{\numberline {B.4}Build and Run Instructions}{121}{}%
+\contentsline {subsection}{\numberline {B.4.1}Chapter 4: Elias-Fano (Java/Maven)}{121}{}%
+\contentsline {subsection}{\numberline {B.4.2}Chapter 5: Fast Predecessor Search (C++)}{122}{}%
+\contentsline {section}{\numberline {B.5}Computing Environment}{123}{}%
+\contentsline {section}{\numberline {B.6}Data Availability}{123}{}%
